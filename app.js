@@ -1,13 +1,29 @@
-var express = require('express');
-var app = express();
+// Global variables
+var express = require('express')
+  , app     = express()
+  , server  = require('http').createServer(app)
+  , io      = require('socket.io').listen(server)
+  , port    = 14001;
 
-app.get('/hello.txt', function(req, res){
-  var body = 'Hello World';
-  res.setHeader('Content-Type', 'text/plain');
-  res.setHeader('Content-Length', Buffer.byteLength(body));
-  res.end(body);
+
+// Static files middleware
+app.use(express.static(__dirname + '/public'));
+
+
+// Launch server
+server.listen(port);
+console.log('Listening on port : ' + port);
+
+
+// Socket handlers
+io.sockets.on('connection', function (socket) {
+
+  socket.emit('connected', { hello: 'world' });
+
+  socket.on('ping', function (data) {
+    console.log('Socket pinged with msg : ', data);
+
+    // Dispatching the message, because why not
+    socket.emit('ping', data);
+  });
 });
-
-
-app.listen(14001);
-console.log('Listening on port 14001');

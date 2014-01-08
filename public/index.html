@@ -1,0 +1,23 @@
+<html ng-app="app">
+  <head>
+    <title>PLST</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/main.js"></script>
+
+  </head>
+
+  <body ng-controller="MainCtrl">
+    <h1>PLST</h1>
+
+    <ul>
+      <!-- track by $index because of duplicate values ... -->
+      <li ng-repeat="message in messages track by $index"> 
+        {{message}}
+      </li>
+    </ul>
+
+    <button ng-click="ping()">Ping</button>
+  </body>
+</html>
