@@ -2,22 +2,54 @@
   <head>
     <title>PLST</title>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/main.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/main.js"></script>
 
   </head>
 
   <body ng-controller="MainCtrl">
-    <h1>PLST</h1>
+    <div id="dz-root"></div>
 
-    <ul>
-      <!-- track by $index because of duplicate values ... -->
-      <li ng-repeat="message in messages track by $index"> 
-        {{message}}
+<!--     <form id="searchForm">
+      <div class="row collapse">
+        <div class="small-9 columns">
+          <input id="search" type="text" placeholder="Search"/>
+        </div>
+        <div class="small-3 columns">
+          <input type="submit" value="Rechercher" class="button postfix"/>
+        </div>
+      </div>
+    </form> -->
+
+    <div class="row">
+      <h2><br/>plst</h2>
+    </div>
+
+    <ul id="results">
+      <li ng-repeat="track in playlist | orderBy:'score':true" class="row track">
+        <div class="small-12 columns">
+
+          <!-- Vote button -->
+          <a class="button right" ng-click="vote(track)">
+            +1
+          </a>
+
+          <span>{{ track.score }}</span>
+
+          <em>{{ track.artist }}</em>
+          <strong>{{ track.title }}</strong>
+
+        </div>
       </li>
     </ul>
 
-    <button ng-click="ping()">Ping</button>
   </body>
 </html>

@@ -1,0 +1,106 @@
+li {
+    list-style: none;
+    line-height: 72px;
+    font-size: 1.2em;
+}
+
+ul {
+    margin-left: 0;
+}
+
+body {
+    color: #ddd;
+    background: #333;
+}
+h1, h2 {
+    color: #ddd;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+.row {
+    border-bottom: 1px solid #444;
+}
+
+li em {
+    display: inline-block;
+    font-style: inherit;
+    text-transform: uppercase;
+    font-weight: lighter;
+}
+
+li strong {
+    display: inline-block;
+}
+
+li .button {
+    margin-bottom: 0;
+    margin-top: 10px;
+}
+
+li span {
+    margin-right: 12px;
+    vertical-align: bottom;
+    display: inline-block;
+    font-weight: bolder;
+    font-size: 72px;
+    color: #555;
+}
+
+
+/* Playlist reordering */
+/* c.f http://jsfiddle.net/jgoemat/kta95/3/ */
+.track.ng-move {
+  position: relative;
+  top: 72px;
+  transition: all 0.5s ease;
+}
+
+
+.track.ng-move.ng-move-active {
+  transition: all 0.5s ease;
+  top: 0;
+}
+
+.track.ng-move + li {
+    /* cannot have transition on this element */
+    /*transition: all 1s ease;*/
+    position: relative;
+    top: -72px;
+}
+
+.track.ng-move.ng-move-active + li {
+    transition: all 0.5s ease;
+    position: relative;
+    top: 0;
+}
+
+.track.ng-enter {
+    position: relative;
+    opacity: 0.0;
+    height: 0;
+    left: 100px;
+}
+
+.track.ng-enter.ng-enter-active {
+    transition: all 0.5s ease;
+    opacity: 1.0;
+    left: 0;
+    height: 72px;
+}
+
+.track.ng-leave {
+    position: relative;
+    opacity: 1.0;
+    left: 0;
+    height: 72px;
+    z-index: -100;
+}
+
+.track.ng-leave.ng-leave-active {
+    transition: all 0.5s ease;
+    opacity: 0.0;
+    left: 100px;
+    height: 0;
+    top: -36px;
+}
+
