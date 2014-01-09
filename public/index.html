@@ -11,11 +11,19 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js"></script>
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
     <script type="text/javascript" src="/js/main.js"></script>
+
+    <script type="text/javascript" src="/js/services/socket.js"></script>
+
+    <script type="text/javascript" src="/js/directives/cooldown.js"></script>
+
+    <script type="text/javascript" src="/js/controllers/playlist.js"></script>
+    <script type="text/javascript" src="/js/controllers/cooldowns.js"></script>
 
   </head>
 
-  <body ng-controller="MainCtrl">
+  <body>
     <div id="dz-root"></div>
 
 <!--     <form id="searchForm">
@@ -33,7 +41,19 @@
       <h2><br/>plst</h2>
     </div>
 
-    <ul id="results">
+    <div class="row" id="cooldowns" ng-controller="CooldownsCtrl">
+      <canvas 
+        cooldown 
+        ng-repeat="cooldown in cooldowns" 
+        ng-click="refresh(cooldown)"
+        size="50px" 
+        remaining="cooldown.remaining" 
+        max="{{cooldown.duration}}" 
+        label="{{cooldown.label}}">
+      </canvas>
+    </div>
+
+    <ul id="results" ng-controller="PlaylistCtrl">
       <li ng-repeat="track in playlist | orderBy:'score':true" class="row track">
         <div class="small-12 columns">
 
