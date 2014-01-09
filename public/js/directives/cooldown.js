@@ -30,6 +30,9 @@ angular.module('app').directive('cooldown', function($interval){
 
       // Saving the canvas 2D context
       ctx = canvas.getContext('2d');
+
+      // Render
+      update();
     }
 
     // Update the canvas

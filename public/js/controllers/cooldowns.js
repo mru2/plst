@@ -9,9 +9,9 @@ angular.module('app').controller('CooldownsCtrl', function($scope) {
   console.log('in CooldownCtrl');
 
   $scope.cooldowns = [
-    { label: "-", duration: 1000, remaining: 1000 },
-    { label: "+", duration: 5000, remaining: 5000 },
-    { label: "x", duration: 30000, remaining: 30000 }
+    { label: "-", duration: 1000, remaining: 0 },
+    { label: "+", duration: 5000, remaining: 0 },
+    { label: "x", duration: 30000, remaining: 0 }
   ];
 
   $scope.refresh = function(cooldown){
