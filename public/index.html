@@ -58,9 +58,19 @@
       <li ng-repeat="track in playlist | orderBy:'score':true" class="row track">
         <div class="small-12 columns">
 
+          <!-- Bomb button -->
+          <a class="button right" ng-click="bomb(track)">
+            x
+          </a>
+
+          <!-- Dot button -->
+          <a class="button right" ng-click="dot(track)">
+            +
+          </a>
+
           <!-- Vote button -->
           <a class="button right" ng-click="vote(track)">
-            +1
+            .
           </a>
 
           <span>{{ track.score }}</span>

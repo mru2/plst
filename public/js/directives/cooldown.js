@@ -109,22 +109,11 @@ angular.module('app').directive('cooldown', function($interval){
         requestAnimationFrame(tick);
       }
     }
-
+ 
 
     // Initialize the countdown
     init();
 
-    // Setup the interval loop
-    // Likely in need of an optimisation (when remaining = 0)
-    // $interval(function() {
-    //   remaining -= 20;
-    //   if (remaining < 0){
-    //     remaining = 0;
-    //   }
-    //   else{
-    //     update();
-    //   }
-    // }, 20);
 
     // Watch the changes in the remaining attr
     // attrs.$observe('remaining', function(value){
