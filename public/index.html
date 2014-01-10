@@ -47,9 +47,10 @@
         ng-repeat="cooldown in cooldowns" 
         ng-click="refresh(cooldown)"
         size="50px" 
-        remaining="cooldown.remaining" 
+        remaining="{{cooldown.remaining}}" 
         max="{{cooldown.duration}}" 
-        label="{{cooldown.label}}">
+        label="{{cooldown.label}}"
+        last-click="cooldown.lastClick">
       </canvas>
     </div>
 

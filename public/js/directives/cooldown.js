@@ -10,7 +10,12 @@ angular.module('app').directive('cooldown', function($interval){
     console.log('linking with', scope, ',', element, 'and', attrs)
 
     // Local variables
-    var label, ctx, size, center, radius, max, thickness;
+    var label, ctx, size, center, radius, max, thickness, remaining;
+
+    // State machine
+    var drawing = false;
+    var former_ts;
+    var delta;
 
     // Init the canvas and the values
     function init(){
@@ -32,12 +37,27 @@ angular.module('app').directive('cooldown', function($interval){
       ctx = canvas.getContext('2d');
 
       // Render
-      update();
+      startCooldown();
     }
 
     // Update the canvas
-    function update(){
-      // console.log('in update');
+    function tick(ts){
+
+      // Get the time delta
+      if (former_ts == 0){
+        former_ts = ts;
+      }
+
+      delta = ts - former_ts;
+      former_ts = ts;
+
+      // Update the remaining time
+      remaining = remaining - delta;
+
+      if (remaining < 0){
+        // Animation end
+        drawing = false;
+      }
 
       ctx.clearRect(0, 0, (center*2), (center*2));
 
@@ -46,6 +66,10 @@ angular.module('app').directive('cooldown', function($interval){
 
       // Draw the progressbar
       drawCircle();
+
+      if( drawing ){
+        requestAnimationFrame(tick);        
+      }
     }
 
     // Draw the label
@@ -63,7 +87,7 @@ angular.module('app').directive('cooldown', function($interval){
     function drawCircle(){
 
       var startAngle = - (Math.PI / 2);
-      var endAngle = ((Math.PI * 2 ) * (1 - (scope.remaining / max))) - (Math.PI / 2);
+      var endAngle = ((Math.PI * 2 ) * (1 - (remaining / max))) - (Math.PI / 2);
       var anticlockwise = false;
 
       ctx.beginPath();
@@ -74,20 +98,43 @@ angular.module('app').directive('cooldown', function($interval){
     }
 
 
+    function startCooldown(){
+      if(drawing == true){
+        console.log('already drawing');
+      }
+      else{
+        console.log('starting cooldown');
+        drawing = true;
+        former_ts = 0;
+        requestAnimationFrame(tick);
+      }
+    }
+
+
     // Initialize the countdown
     init();
 
     // Setup the interval loop
     // Likely in need of an optimisation (when remaining = 0)
-    $interval(function() {
-      scope.remaining -= 20;
-      if (scope.remaining < 0){
-        scope.remaining = 0;
-      }
-      else{
-        update();
-      }
-    }, 20);
+    // $interval(function() {
+    //   remaining -= 20;
+    //   if (remaining < 0){
+    //     remaining = 0;
+    //   }
+    //   else{
+    //     update();
+    //   }
+    // }, 20);
+
+    // Watch the changes in the remaining attr
+    // attrs.$observe('remaining', function(value){
+    scope.$watch('lastClick', function(value) {
+      console.log('update in last-click value', value);
+      remaining = max - (Date.now() - value);
+      console.log('restarting with remaining', remaining);
+      startCooldown();
+    });
+
   }
 
   return {
@@ -97,8 +144,8 @@ angular.module('app').directive('cooldown', function($interval){
 
     // Internal variables
     scope: {
-      // 2-way binding
-      remaining: '='
+      // 1-way binding
+      lastClick: '=lastClick'
     },
 
     // HTML template
