@@ -3,7 +3,7 @@
 // https://gist.github.com/nicksheffield/7423095
 // ==============
 
-angular.module('app').factory('socket', function($rootScope){
+angular.module('app').factory('$socket', function($rootScope){
 
   var socket = io.connect();
 

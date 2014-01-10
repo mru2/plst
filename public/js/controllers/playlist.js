@@ -2,9 +2,11 @@
 // Playlist controller
 // ===================
 
-angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, socket) {
+angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $socket, cooldowns) {
 
   console.log('in PlaylistCtrl');
+
+  $scope.cooldowns = cooldowns;
 
   // To put in a service, to handle scoring, indexing, updates, ...
   // https://github.com/tomkuk/angular-collection
@@ -28,34 +30,14 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, sock
     bumpOne();
   }
 
-
-
   // Bootstraping the playlist
-  socket.on('connected', function(data){
+  $socket.on('connected', function(data){
     console.log('Socket connected', data);
     $scope.playlist = data;
   });
 
-  // Voting on a track
-  $scope.vote = function(track){
-    console.log('voting for', track);
-    socket.emit('vote', {trackId: track.id});
-  };
-
-  // Doting a track
-  $scope.dot = function(track){
-    console.log('doting', track);
-    socket.emit('dot', {trackId: track.id});
-  };
-
-  // Bombing a track
-  $scope.bomb = function(track){
-    console.log('bombing', track);
-    socket.emit('bomb', {trackId: track.id});
-  };
-
   // Handling updates
-  socket.on('push', function(data){
+  $socket.on('push', function(data){
     console.log('SOCKET : received push', data);
     var track = getTrack(data.trackId);
 

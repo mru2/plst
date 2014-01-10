@@ -22,14 +22,18 @@ h1, h2 {
 }
 
 li em {
-    display: inline-block;
+    display: block;
     font-style: inherit;
     text-transform: uppercase;
     font-weight: lighter;
+    line-height: 1.6em;
+    margin-top: 0.5em;
 }
 
 li strong {
-    display: inline-block;
+    display: block;
+    line-height: 1.5em;
+    margin-bottom: 0.5em;
 }
 
 li .button {
@@ -37,15 +41,21 @@ li .button {
     margin-top: 10px;
 }
 
-li span {
-    margin-right: 12px;
+.score{
+  text-align: right;
+}
+.score span {
     vertical-align: bottom;
     display: inline-block;
     font-weight: bolder;
-    font-size: 72px;
+    font-size: 55px;
     color: #555;
 }
 
+.cooldowns{
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+}
 
 /* Playlist reordering */
 /* c.f http://jsfiddle.net/jgoemat/kta95/3/ */

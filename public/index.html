@@ -2,6 +2,13 @@
   <head>
     <title>PLST</title>
 
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="640">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
+    <meta http-equiv="cleartype" content="on">
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
@@ -15,11 +22,11 @@
     <script type="text/javascript" src="/js/main.js"></script>
 
     <script type="text/javascript" src="/js/services/socket.js"></script>
+    <script type="text/javascript" src="/js/services/cooldowns.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
 
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
-    <script type="text/javascript" src="/js/controllers/cooldowns.js"></script>
 
   </head>
 
@@ -41,43 +48,48 @@
       <h2><br/>plst</h2>
     </div>
 
-    <div class="row" id="cooldowns" ng-controller="CooldownsCtrl">
-      <canvas 
-        cooldown 
-        ng-repeat="cooldown in cooldowns" 
-        ng-click="refresh(cooldown)"
-        size="50px" 
-        remaining="{{cooldown.remaining}}" 
-        max="{{cooldown.duration}}" 
-        label="{{cooldown.label}}"
-        last-click="cooldown.lastClick">
-      </canvas>
-    </div>
+
 
     <ul id="results" ng-controller="PlaylistCtrl">
       <li ng-repeat="track in playlist | orderBy:'score':true" class="row track">
-        <div class="small-12 columns">
 
-          <!-- Bomb button -->
+<!-- 
           <a class="button right" ng-click="bomb(track)">
             x
           </a>
 
-          <!-- Dot button -->
           <a class="button right" ng-click="dot(track)">
             +
           </a>
 
-          <!-- Vote button -->
           <a class="button right" ng-click="vote(track)">
             .
           </a>
+ -->
 
-          <span>{{ track.score }}</span>
+          <div class="small-2 columns score">
+            <span>{{ track.score }}</span>
+          </div>
 
-          <em>{{ track.artist }}</em>
-          <strong>{{ track.title }}</strong>
+          <div class="small-6 columns">
+            <em>{{ track.artist }}</em>
+            <strong>{{ track.title }}</strong>
+          </div>
 
+
+          <div class="small-4 columns cooldowns">
+            <canvas 
+              cooldown 
+              ng-repeat="cooldown in cooldowns" 
+              ng-click="cooldown.use(track)"
+              size="60px" 
+              color="{{cooldown.color}}"
+              remaining="{{cooldown.remaining}}" 
+              max="{{cooldown.duration}}" 
+              icon="{{cooldown.iconCode}}"
+              last-click="cooldown.lastClick">
+            </canvas>
+          </div>
         </div>
       </li>
     </ul>

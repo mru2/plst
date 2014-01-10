@@ -65,10 +65,10 @@ io.sockets.on('connection', function (socket) {
     upvote(data.trackId, 1);
   });
 
-  // Bomb : +50
+  // Bomb : +10
   socket.on('bomb', function(data){
     console.log('SOCKET : received bomb with', data);
-    upvote(data.trackId, 50);
+    upvote(data.trackId, 10);
   });
 
   // Dot : +5 then +1 every second for 10 seconds
