@@ -1,3 +1,7 @@
+body{
+  font-family: 'Lato', sans-serif;  
+}
+
 li {
     list-style: none;
     line-height: 72px;

@@ -7,10 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
     <meta http-equiv="cleartype" content="on">
 
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,400,900,100italic,400italic,900italic' rel='stylesheet' type='text/css'>
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/cooldown.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 
     <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
@@ -78,17 +80,12 @@
 
 
           <div class="small-4 columns cooldowns">
-            <canvas 
-              cooldown 
+            <cooldown 
               ng-repeat="cooldown in cooldowns" 
+              cooldown = "cooldown"
               ng-click="cooldown.use(track)"
-              size="60px" 
-              color="{{cooldown.color}}"
-              remaining="{{cooldown.remaining}}" 
-              max="{{cooldown.duration}}" 
-              icon="{{cooldown.iconCode}}"
-              last-click="cooldown.lastClick">
-            </canvas>
+              size="60">
+            </cooldown>
           </div>
         </div>
       </li>

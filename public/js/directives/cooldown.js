@@ -1,195 +1,132 @@
-angular.module('app').directive('cooldown', function($interval){
+angular.module('app').directive('cooldown', function(){
 
-  // var canvas = document.createElement('canvas');
-  // canvas.setAttribute('width', width);
-  // canvas.setAttribute('height', height);  
+  // The initialization
+  var initialize = function(scope, config){
+
+    // Default scope
+    scope.class = "";
+
+    scope.openingStyle = {
+      'width': config.size + 'px',
+      'height': config.size + 'px',
+      'border-width': (config.size/10),
+      'border-color': scope.cooldown.color,
+    };
+
+    scope.circleStyle = {
+      'width': (config.size * 0.9) + 'px',
+      'height': (config.size * 0.9) + 'px',
+      'margin-left': '-' + (config.size * 0.9/2) + 'px',
+      'margin-top': '-' + (config.size * 0.9/2) + 'px',
+      'background-color': scope.cooldown.color
+    };
+
+    scope.iconStyle = {
+      'font-size': (config.size*0.6)+ 'px',
+      'width': (config.size*0.9) + 'px',
+      'height': (config.size*0.9) + 'px',
+      'line-height': (config.size*0.9) + 'px'
+    };
+
+    scope.iconChar = String.fromCharCode(scope.cooldown.iconCode);
+
+  };
 
 
-  // Update the canvas
-  var link = function(scope, element, attrs){
-    console.log('linking with', scope, ',', element, 'and', attrs)
-
-    // Local variables
-    var icon, ctx, size, center, radius, max, thickness, remaining, text, color, fontSize;
+  // The redrawing logic
+  var startCooldown = function(scope){
 
     // State machine
     var drawing = false;
     var former_ts;
-    var delta;
 
-    // Init the canvas and the values
-    function init(){
+    // Rendering logic
+    var render = function(){
 
-      // Global variables
-      icon = String.fromCharCode(parseInt(attrs.icon));
-      size = attrs.size;
-      color = attrs.color || "#ddd";
-      center = parseInt(attrs.size)/2;
-      radius = center * 0.8; // Not filling everything
-      fontSize = radius * 0.8;
-      max = parseInt(attrs.max); // Assume max is 10s for now
-      thickness = radius * 0.1;
+      // Get the completion (0 to 1)
+      var completion = scope.cooldown.completion();
 
-      // Canvas initialization
-      var canvas = element[0];
-      canvas.setAttribute('width', size);
-      canvas.setAttribute('height', size);
-
-      // Saving the canvas 2D context
-      ctx = canvas.getContext('2d');
-
-      // Render
-      startCooldown();
-    }
-
-    // Update the canvas
-    function tick(ts){
-
-      // Get the time delta
-      if (former_ts == 0){
-        former_ts = ts;
-      }
-
-      delta = ts - former_ts;
-      former_ts = ts;
-
-      // Update the remaining time
-      remaining = remaining - delta;
-
-      if (remaining < 0){
-        // Animation end
+      // Handle just finished state
+      if (completion === 1){
         drawing = false;
+        // Custom event
+        scope.$apply(function(){
+          scope.circleStyle['-webkit-transform'] = null;
+          scope.circleStyle['opacity'] = null;
+          scope.class = 'complete';
+        });
+        return;
+      }
+      else {
+        scope.class = '';
       }
 
-      ctx.clearRect(0, 0, (center*2), (center*2));
+      // Handle completion state
+      scope.$apply(function(){
+        scope.circleStyle['opacity'] = (1 - (completion)*0.7);
+        scope.circleStyle['-webkit-transform'] = 'scale(' + completion + ')';
+      });
 
-      // Draw the background
-      drawBackground();
 
-      // Draw the label
-      drawLabel();
-
-      // Draw the progressbar
-      drawCircle();
-
-      if( drawing ){
-        requestAnimationFrame(tick);        
-      }
-    }
-
-    // Draw the label
-    function drawLabel(){
-      ctx.font = 'bold ' + fontSize + 'px FontAwesome';
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-
-      if(drawing){
-        if(remaining > 1000){
-          text = Math.ceil(remaining/1000);
-          ctx.fillStyle = "#ddd";
-        }
-        else {
-          text = Math.ceil(remaining/100) / 10;
-          ctx.fillStyle = "#ff0000";
-        }
-      }
-      else{
-        text = icon;
-        ctx.fillStyle = color;
+      // Continue the render loop
+      if (drawing === true){
+        requestAnimationFrame(render);
       }
 
+    };
 
-      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.lineWidth = fontSize * 0.3;
-
-      // Actual text drawing
-      
-      globalCompositeOperation='darker';
-      ctx.strokeText(text, center, center);
-      globalCompositeOperation='source-over';
-
-      ctx.fillText(text, center, center);
-    }
-
-    //Draw the background
-    function drawBackground(){
-      if(drawing == false){
-        ctx.globalAlpha = 0.3;
-        ctx.beginPath();
-        ctx.arc(center, center, parseInt(radius), 0, 2 * Math.PI, false);
-        ctx.fillStyle = color;
-        ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-   }
-
-    // Draw the progress circle
-    function drawCircle(){
-
-      var startAngle = - (Math.PI / 2);
-      var endAngle = ((Math.PI * 2 ) * (1 - (remaining / max))) - (Math.PI / 2);
-      var anticlockwise = false;
-
-      // Shadow
-      ctx.beginPath();
-      ctx.arc(center, center, (parseInt(radius) + 0), startAngle, endAngle, anticlockwise);
-      ctx.lineWidth = thickness*2.5;
-      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.stroke();
-
-      // Actual arc
-      ctx.beginPath();
-      ctx.arc(center, center, parseInt(radius), startAngle, endAngle, anticlockwise);
-      ctx.lineWidth = thickness;
-      ctx.strokeStyle = color;
-      ctx.stroke();
-
+    // Render loop
+    if(drawing === true){
+      console.log('already drawing');
 
     }
+    else{
+      console.log('starting cooldown');
+      drawing = true;
+      former_ts = 0;
 
-
-    function startCooldown(){
-      if(drawing == true){
-        console.log('already drawing');
-      }
-      else{
-        console.log('starting cooldown');
-        drawing = true;
-        former_ts = 0;
-        requestAnimationFrame(tick);
-      }
+      requestAnimationFrame(render);
     }
- 
-
-    // Initialize the countdown
-    init();
+  };
 
 
-    // Watch the changes in the remaining attr
-    // attrs.$observe('remaining', function(value){
-    scope.$watch('lastClick', function(value) {
-      console.log('update in last-click value', value);
-      remaining = max - (Date.now() - value);
-      console.log('restarting with remaining', remaining);
-      startCooldown();
+
+  // The inside logic
+  var link = function(scope, element, attrs){
+
+    // Fetching params from attributes    
+    var size = parseInt(attrs.size);
+
+    // Initialization
+    initialize(scope, {size: size});
+
+    // Drawing loop
+    startCooldown(scope);
+
+    // Watch changes (tochange)
+    scope.$watch('cooldown.lastClick', function() {
+      startCooldown(scope);
     });
 
-  }
+  };
+
 
   return {
 
     // Check element name
-    restrict: 'A',
+    restrict: 'E',
 
     // Internal variables
     scope: {
       // 1-way binding
-      lastClick: '=lastClick'
+      cooldown: '=cooldown'
     },
 
     // HTML template
-    link: link
+    templateUrl: 'js/templates/cooldown.html',
 
+    // Internal scope
+    link: link
   }
 
 });

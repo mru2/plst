@@ -26,13 +26,24 @@ angular.module('app').factory('cooldowns', function($socket){
 
   }
 
+  Cooldown.prototype.completion = function(){
+    var delta = Date.now() - this.lastClick;
+
+    if (delta >= this.duration){
+      return 1;
+    }
+    else {
+      return delta / this.duration;
+    }
+  }
+
 
   var lastClick = Date.now() - 50000;
 
   return [
-    new Cooldown({ action: "vote", iconCode: 0xf005, duration: 1000, remaining: 0, color: '#0ff', lastClick: lastClick }),
-    new Cooldown({ action: "dot",  iconCode: 0xf110, duration: 3000, remaining: 0, color: '#ff0', lastClick: lastClick }),
-    new Cooldown({ action: "bomb", iconCode: 0xf135, duration: 8000, remaining: 0, color: '#f0f', lastClick: lastClick })
+    new Cooldown({ action: "vote", iconCode: 0xf005, duration: 1000, color: '#0ff', lastClick: lastClick }),
+    new Cooldown({ action: "dot",  iconCode: 0xf110, duration: 3000, color: '#ff0', lastClick: lastClick }),
+    new Cooldown({ action: "bomb", iconCode: 0xf135, duration: 8000, color: '#f0f', lastClick: lastClick })
   ];
 
 });
