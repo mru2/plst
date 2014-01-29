@@ -72,21 +72,34 @@ li .button {
 }
 
 .track.slide .front{
-  -webkit-transform: translateX(-190px);
+  -webkit-transform: translateX(170px);
+}
+
+.track .track-details{
+  padding-right: 70px;
 }
 
 .track .back{
   position: absolute;
-  right: 12;
-  top: 0;
+  left: 10px;
+  top: 4px;
 }
 
-.track .toggle-slide i{
+.track i.toggle-switch{
+  position: absolute;
+  right: 20px;
+  top: 0px;
   cursor: pointer;
   color: #444;
   font-size: 72px;
+  z-index: 1;
+  transition: 300ms -webkit-transform ease;
+
 }
 
+.track.slide i.toggle-switch{
+  -webkit-transform: rotateY(180deg);
+}
 
 /* Playlist reordering */
 /* c.f http://jsfiddle.net/jgoemat/kta95/3/ */

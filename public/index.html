@@ -55,8 +55,8 @@
 
 
 
-    <ul id="results" ng-controller="PlaylistCtrl">
-      <li ng-repeat="track in playlist | orderBy:'score':true" class="track row" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-left="openSlide(track)" ng-swipe-right="closeSlide()">
+    <ul id="results" ng-controller="PlaylistCtrl" class="row">
+      <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
 <!-- 
           <a class="button right" ng-click="bomb(track)">
@@ -71,6 +71,7 @@
             .
           </a>
  -->
+          <i class="fa fa-angle-right toggle-switch" ng-click="toggleSlide(track)"></i>
 
           <div class="back">
             <div class="cooldowns">
@@ -85,18 +86,15 @@
 
           <div class="front row">
 
-            <div class="small-2 columns score">
+            <div class="small-3 columns score">
               <span>{{ track.score }}</span>
             </div>
 
-            <div class="small-9 columns">
+            <div class="small-9 columns track-details">
               <em>{{ track.artist }}</em>
               <strong>{{ track.title }}</strong>
             </div>
 
-            <div class="small-1 columns toggle-slide" ng-click="toggleSlide(track)">
-              <i class="fa fa-angle-left"></i>
-            </div>
           </div>
 
 
