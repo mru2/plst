@@ -3,6 +3,7 @@
 cooldown{
   display: inline-block;
   margin: 5px;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 
 cooldown div.opening{
@@ -66,18 +67,47 @@ cooldown a.kudobject{
 
 cooldown .kudo.complete a.kudobject div.opening div.circle{
   transition-property: none;
-  animation: bounce 1s;
-  animation-iteration-count: 1;
+/*  animation: bounce 1s;*/
+/*  animation-iteration-count: 1;*/
   transform: scale(0.80);
   -webkit-transition-property: none;
-  -webkit-animation: bounce 1s;
-  -webkit-animation-iteration-count: 1;
+/*  -webkit-animation: bounce 1s;*/
+/*  -webkit-animation-iteration-count: 1;*/
   -webkit-transform: scale(0.80);
   -moz-transition-property: none;
-  -moz-animation: bounce 1s;
-  -moz-animation-iteration-count: 1;
+/*  -moz-animation: bounce 1s;*/
+/*  -moz-animation-iteration-count: 1;*/
   -moz-transform: scale(0.80);
 }
+
+/* Animation */
+/* Hacks so the children animation is not ignored */
+cooldown .kudo.complete-add{
+  transition: 500ms linear all;
+}
+
+cooldown .kudo.complete-remove{
+  transition: 200ms linear all;
+}
+
+
+cooldown .kudo.complete-add a.kudobject div.opening div.circle{
+  -webkit-animation: bounce 500ms;
+}
+
+cooldown .kudo.complete-remove a.kudobject div.opening div.circle{
+  -webkit-animation: fadeout 200ms cubic-bezier(0.39, 0.575, 0.565, 1); /*Easeout-sin*/
+}
+
+/*cooldown kudo.hidden.ng-enter {
+  -webkit-animation: enter_sequence 1s linear;
+}
+
+@-webkit-keyframes enter_sequence {
+  from { opacity:0; }
+  to { opacity:1; }
+}*/
+
 
 @keyframes bounce { 
   0% {
@@ -126,4 +156,15 @@ cooldown .kudo.complete a.kudobject div.opening div.circle{
   }
   80% { -moz-transform: scale(0.95) }
   100% { -moz-transform: scale(0.85) }
+}
+
+@-webkit-keyframes fadeout { 
+  from { 
+    -webkit-transform: scale(0.85);
+    opacity:1;
+  }
+  to { 
+    -webkit-transform: scale(2);
+    opacity:0;
+  }
 }

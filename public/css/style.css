@@ -85,19 +85,25 @@ li .button {
   top: 4px;
 }
 
-.track i.toggle-switch{
+.track .toggle-switch{
+  height: 100%;
   position: absolute;
-  right: 20px;
+  right: 0px;
   top: 0px;
+  padding-right: 20px;
+  padding-left: 20px;
+  background-image: -webkit-gradient(linear, right top, left top, from(#333), to(rgba(0,0,0,0)), color-stop(.8,#333));;
   cursor: pointer;
   color: #444;
   font-size: 72px;
   z-index: 1;
-  transition: 300ms -webkit-transform ease;
-
 }
 
-.track.slide i.toggle-switch{
+.track .toggle-switch i{
+  transition: 300ms -webkit-transform ease;
+}
+
+.track.slide .toggle-switch i{
   -webkit-transform: rotateY(180deg);
 }
 
