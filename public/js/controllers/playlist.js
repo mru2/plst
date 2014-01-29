@@ -10,12 +10,20 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $soc
 
   $scope.currentTrack = null;
 
+  $scope.openSlide = function(track) {
+    $scope.currentTrack = track;
+  };
+
+  $scope.closeSlide = function() {
+    $scope.currentTrack = null;
+  };
+
   $scope.toggleSlide = function(track) {
     if ($scope.currentTrack === track) {
-      $scope.currentTrack = null;
+      $scope.closeSlide();
     }
     else {
-      $scope.currentTrack = track;
+      $scope.openSlide(track);
     }
   };
 
@@ -28,7 +36,6 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $soc
 
   // Bump a track's score, not all at once
   var bumpTrack = function(track, score){
-    var remaining = score;
   
     var bumpOne = function(){
       track.score += 1;

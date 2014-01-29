@@ -19,6 +19,9 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-animate.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.6/angular-touch.js"></script>
+
+
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 
     <script type="text/javascript" src="/js/main.js"></script>
@@ -53,7 +56,7 @@
 
 
     <ul id="results" ng-controller="PlaylistCtrl">
-      <li ng-repeat="track in playlist | orderBy:'score':true" class="track row" ng-class="(currentTrack === track) ? 'slide' : ''">
+      <li ng-repeat="track in playlist | orderBy:'score':true" class="track row" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-left="openSlide(track)" ng-swipe-right="closeSlide()">
 
 <!-- 
           <a class="button right" ng-click="bomb(track)">
