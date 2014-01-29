@@ -53,7 +53,7 @@
 
 
     <ul id="results" ng-controller="PlaylistCtrl">
-      <li ng-repeat="track in playlist | orderBy:'score':true" class="row track">
+      <li ng-repeat="track in playlist | orderBy:'score':true" class="track row" ng-class="(currentTrack === track) ? 'slide' : ''">
 
 <!-- 
           <a class="button right" ng-click="bomb(track)">
@@ -69,24 +69,34 @@
           </a>
  -->
 
-          <div class="small-2 columns score">
-            <span>{{ track.score }}</span>
+          <div class="back">
+            <div class="cooldowns">
+              <cooldown 
+                ng-repeat="cooldown in cooldowns" 
+                cooldown = "cooldown"
+                ng-click="cooldown.use(track)"
+                size="40">
+              </cooldown>
+            </div>
           </div>
 
-          <div class="small-6 columns">
-            <em>{{ track.artist }}</em>
-            <strong>{{ track.title }}</strong>
+          <div class="front row">
+
+            <div class="small-2 columns score">
+              <span>{{ track.score }}</span>
+            </div>
+
+            <div class="small-9 columns">
+              <em>{{ track.artist }}</em>
+              <strong>{{ track.title }}</strong>
+            </div>
+
+            <div class="small-1 columns toggle-slide" ng-click="toggleSlide(track)">
+              <i class="fa fa-angle-left"></i>
+            </div>
           </div>
 
 
-          <div class="small-4 columns cooldowns">
-            <cooldown 
-              ng-repeat="cooldown in cooldowns" 
-              cooldown = "cooldown"
-              ng-click="cooldown.use(track)"
-              size="60">
-            </cooldown>
-          </div>
         </div>
       </li>
     </ul>

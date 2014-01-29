@@ -8,6 +8,17 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $soc
 
   $scope.cooldowns = cooldowns;
 
+  $scope.currentTrack = null;
+
+  $scope.toggleSlide = function(track) {
+    if ($scope.currentTrack === track) {
+      $scope.currentTrack = null;
+    }
+    else {
+      $scope.currentTrack = track;
+    }
+  };
+
   // To put in a service, to handle scoring, indexing, updates, ...
   // https://github.com/tomkuk/angular-collection
   var getTrack = function(trackId){

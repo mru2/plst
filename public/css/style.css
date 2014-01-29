@@ -21,10 +21,6 @@ h1, h2 {
     font-weight: bold;
     margin-bottom: 0.5em;
 }
-.row {
-    border-bottom: 1px solid #444;
-}
-
 li em {
     display: block;
     font-style: inherit;
@@ -60,6 +56,36 @@ li .button {
   padding-top: 0.5em;
   padding-bottom: 0.5em;
 }
+
+/* Sliding the cooldowns */
+.track{
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid #444;
+  background: #444;
+}
+
+.track .front{
+  background: #333;
+  -webkit-transform: translateX(0px);
+  transition: -webkit-transform 300ms ease;
+}
+
+.track.slide .front{
+  -webkit-transform: translateX(-190px);
+}
+
+.track .back{
+  position: absolute;
+  right: 12;
+  top: 0;
+}
+
+.track .toggle-slide i{
+  color: #444;
+  font-size: 72px;
+}
+
 
 /* Playlist reordering */
 /* c.f http://jsfiddle.net/jgoemat/kta95/3/ */
