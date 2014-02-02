@@ -1,4 +1,4 @@
-<html ng-app="app">
+<html ng-app="app" ng-init="isSearch = true">
   <head>
     <title>PLST</title>
 
@@ -33,6 +33,7 @@
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
 
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
+    <script type="text/javascript" src="/js/controllers/search.js"></script>
 
   </head>
 
@@ -51,12 +52,54 @@
     </form> -->
 
     <div class="row">
-      <h2><br/>plst</h2>
+      <h2 class="main-title">
+        plst
+        <i class="fa fa-search" ng-click="isSearch = true" ng-show="!isSearch"></i>
+        <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
+      </h2>
     </div>
 
 
+    <!-- Search -->
+    <div ng-controller="SearchCtrl" ng-show="isSearch">
 
-    <ul id="results" ng-controller="PlaylistCtrl" class="row">
+        <div class="row collapse">
+          <div class="small-9 columns">
+            <input type="search" placeholder="Ajouter un morceau" ng-model="query"/>
+          </div>
+          <div class="small-3 columns">
+            <input type="submit" value="Go" class="button postfix" ng-click="doSearch()"/>
+          </div>
+        </div>
+
+        <div class="row" ng-hide="searching">
+        </div>
+
+        <ul class="search-results row">
+          <li ng-repeat="track in results" class="track">
+            <div class="front row">
+
+              <div class="small-3 columns add">
+                <i class="fa fa-plus-circle" ng-click="addTrack(track)"></i>
+              </div>
+
+              <div class="small-9 columns track-details">
+                <em>{{ track.artist.name }}</em>
+                <strong>{{ track.title }}</strong>
+              </div>
+
+            </div>
+          </li>
+        </ul>
+
+      </div>
+
+    </div>
+
+
+    <!-- Playlist -->
+
+    <ul id="results" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
       <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
           <div class="toggle-switch">
