@@ -2,11 +2,12 @@
 // Playlist controller
 // ===================
 
-angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $socket, cooldowns) {
+angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $socket, cooldowns, tracks) {
 
   console.log('in PlaylistCtrl');
 
-  $scope.cooldowns = cooldowns;
+  $scope.upvoteCooldown = cooldowns.upvote
+  $scope.hiddenCooldowns = [cooldowns.multiply, cooldowns.spotlight];
 
   $scope.currentTrack = null;
 
@@ -27,39 +28,19 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $soc
     }
   };
 
-  // To put in a service, to handle scoring, indexing, updates, ...
-  // https://github.com/tomkuk/angular-collection
-  var getTrack = function(trackId){
-    return _.find($scope.playlist, function(track){ return (track.id === trackId); });
-  }
-
-
-  // Bump a track's score, not all at once
-  var bumpTrack = function(track, score){
-  
-    var bumpOne = function(){
-      track.score += 1;
-      score -= 1;
-      if(score > 0){
-        $timeout(bumpOne, 30);        
-      }
-    }
-
-    bumpOne();
-  }
-
   // Bootstraping the playlist
   $socket.on('connected', function(data){
     console.log('Socket connected', data);
-    $scope.playlist = data;
+    tracks.bootstrap(data);
+    $scope.playlist = tracks.all();
   });
 
   // Handling updates
   $socket.on('push', function(data){
     console.log('SOCKET : received push', data);
-    var track = getTrack(data.trackId);
-
-    bumpTrack(track, data.score);
+    var track = tracks.get(data.trackId);
+    track.bump(data.score);
+    // bumpTrack(track, data.score);
   });
 
 });

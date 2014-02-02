@@ -7,9 +7,13 @@ angular.module('app').factory('cooldowns', function($socket){
     this.duration = opts.duration;
     this.color = opts.color;
     this.lastClick = opts.lastClick;
+    this.track = opts.track;
   }
 
   Cooldown.prototype.use = function(track){
+
+    track = track || this.track;
+    console.log('using cooldown', this, 'on track', track);
 
     // Check if ok
     if( Date.now() < this.lastClick + this.duration ){
@@ -40,10 +44,12 @@ angular.module('app').factory('cooldowns', function($socket){
 
   var lastClick = Date.now() - 50000;
 
-  return [
-    new Cooldown({ action: "vote", iconCode: 0xf005, duration: 1000, color: '#0ff', lastClick: lastClick }),
-    new Cooldown({ action: "dot",  iconCode: 0xf110, duration: 3000, color: '#ff0', lastClick: lastClick }),
-    new Cooldown({ action: "bomb", iconCode: 0xf135, duration: 8000, color: '#f0f', lastClick: lastClick })
-  ];
+  return {
+    upvote: function(track){
+      return new Cooldown({ action: "vote", iconCode: 0xf005, duration: 1000, color: '#0ff', lastClick: lastClick, track: track })
+    },
+    multiply: new Cooldown({ action: "dot",  iconCode: 0xf110, duration: 3000, color: '#ff0', lastClick: lastClick }),
+    spotlight: new Cooldown({ action: "bomb", iconCode: 0xf135, duration: 8000, color: '#f0f', lastClick: lastClick })
+  };
 
 });

@@ -72,7 +72,7 @@ li .button {
 }
 
 .track.slide .front{
-  -webkit-transform: translateX(170px);
+  -webkit-transform: translateX(120px);
 }
 
 .track .track-details{
@@ -99,12 +99,8 @@ li .button {
   z-index: 1;
 }
 
-.track .toggle-switch i{
-  transition: 300ms -webkit-transform ease;
-}
-
-.track.slide .toggle-switch i{
-  -webkit-transform: rotateY(180deg);
+.track .toggle-switch cooldown{
+  margin-top: 20px;
 }
 
 /* Playlist reordering */

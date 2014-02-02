@@ -28,6 +28,7 @@
 
     <script type="text/javascript" src="/js/services/socket.js"></script>
     <script type="text/javascript" src="/js/services/cooldowns.js"></script>
+    <script type="text/javascript" src="/js/services/tracks.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
 
@@ -58,27 +59,14 @@
     <ul id="results" ng-controller="PlaylistCtrl" class="row">
       <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
-<!-- 
-          <a class="button right" ng-click="bomb(track)">
-            x
-          </a>
-
-          <a class="button right" ng-click="dot(track)">
-            +
-          </a>
-
-          <a class="button right" ng-click="vote(track)">
-            .
-          </a>
- -->
-          <div class="toggle-switch" ng-click="toggleSlide(track)">
-            <i class="fa fa-angle-right"></i>
+          <div class="toggle-switch">
+            <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
           </div>
 
           <div class="back">
             <div class="cooldowns">
               <cooldown 
-                ng-repeat="cooldown in cooldowns" 
+                ng-repeat="cooldown in hiddenCooldowns" 
                 cooldown = "cooldown"
                 ng-click="cooldown.use(track)"
                 size="40">
@@ -86,7 +74,7 @@
             </div>
           </div>
 
-          <div class="front row">
+          <div class="front row"  ng-click="toggleSlide(track)">
 
             <div class="small-3 columns score">
               <span>{{ track.score }}</span>
