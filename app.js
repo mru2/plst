@@ -33,22 +33,39 @@ var upvote = function(trackId, score){
 };
 
 
-// Dot : +1 every second for x seconds
-var dot = function(trackId, duration){
+// Add a track to the playlist
+var addTrack = function(track){
 
-  var remaining = duration;
+  // Redis : todo
 
-  var doDot = function(){
-    upvote(trackId);
-    remaining -= 1;
-    if(remaining > 0){
-      setTimeout(doDot, 1000);
-    }
-  };
+  // Hack while waiting for redis integration  
+  setTimeout(function(){
+    io.sockets.emit('newTrack', {
+      id: track.id,
+      title: track.title,
+      artist: track.artist.name,
+      score: 1
+    });
+  }, 1000);
 
-  setTimeout(doDot, 1000);
+}
 
-};
+// // Dot : +1 every second for x seconds
+// var dot = function(trackId, duration){
+
+//   var remaining = duration;
+
+//   var doDot = function(){
+//     upvote(trackId);
+//     remaining -= 1;
+//     if(remaining > 0){
+//       setTimeout(doDot, 1000);
+//     }
+//   };
+
+//   setTimeout(doDot, 1000);
+
+// };
 
 
 // Socket handlers
@@ -65,19 +82,25 @@ io.sockets.on('connection', function (socket) {
     upvote(data.trackId, 1);
   });
 
-  // Bomb : +10
-  socket.on('bomb', function(data){
-    console.log('SOCKET : received bomb with', data);
-    upvote(data.trackId, 10);
+  // New track
+  socket.on('addTrack', function(data){
+    console.log('SOCKET : received addTrack with', data);
+    addTrack(data);
   });
+
+  // Bomb : +10
+  // socket.on('bomb', function(data){
+  //   console.log('SOCKET : received bomb with', data);
+  //   upvote(data.trackId, 10);
+  // });
 
   // Dot : +5 then +1 every second for 10 seconds
-  socket.on('dot', function(data){
-    console.log('SOCKET : received dot with', data);
+  // socket.on('dot', function(data){
+  //   console.log('SOCKET : received dot with', data);
 
-    upvote(data.trackId, 5);
-    dot(data.trackId, 10);
-  });
+  //   upvote(data.trackId, 5);
+  //   dot(data.trackId, 10);
+  // });
 
   // socket.on('ping', function (data) {
   //   console.log('Socket pinged with msg : ', data);

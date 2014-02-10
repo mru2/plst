@@ -1,3 +1,21 @@
+/*aqua     #7FDBFF
+blue     #0074D9
+navy     #001F3F
+teal     #39CCCC
+green    #2ECC40
+olive    #3D9970
+lime     #01FF70
+yellow   #FFDC00
+orange   #FF851B
+red      #FF4136
+fuchsia  #F012BE
+purple   #B10DC9
+maroon   #85144B
+white    #ffffff
+silver   #dddddd
+gray     #aaaaaa
+black    #111111*/
+
 body{
   font-family: 'Lato', sans-serif;  
   -webkit-tap-highlight-color: rgba(0,0,0,0);
@@ -79,7 +97,22 @@ li .button {
 }
 
 .search-results .add i {
+  cursor: pointer;
   line-height: 77px;
+}
+
+.search {
+  margin-top: 1em;
+}
+
+.spinner {
+  font-size: 5em;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.track-added{
+  color: #2ECC40; /*green*/
 }
 
 /* Sliding the cooldowns */

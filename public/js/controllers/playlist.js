@@ -28,6 +28,13 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $soc
     }
   };
 
+  // Watch the playlist changes
+  $scope.$watch('tracks.lastUpdate', function(newVal, oldVal, scope){
+    console.log('change in tracks');
+    // $scope.playlist = 
+  });
+
+
   // Bootstraping the playlist
   $socket.on('connected', function(data){
     console.log('Socket connected', data);

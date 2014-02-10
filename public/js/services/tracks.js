@@ -28,7 +28,8 @@ angular.module('app').factory('tracks', function($socket, $timeout, cooldowns){
   // Current tracks, indexed by id
   var _tracks = {}
 
-  return {
+
+  var service = {
 
     bootstrap: function(data){
       _.each(data, function(trackOpts){
@@ -42,9 +43,24 @@ angular.module('app').factory('tracks', function($socket, $timeout, cooldowns){
 
     all: function(){
       return _.values(_tracks);
-    }
+    },
 
-  }
+    lastUpdate: new Date()
+
+  };
+
+
+  // Monitor new incoming tracks
+  $socket.on('newTrack', function(trackOpts){
+    console.log('new track in playlist', trackOpts);
+    if (! _.has(_tracks, trackOpts.id)) {
+      console.log('adding it');
+      _tracks[trackOpts.id] = new Track(trackOpts);
+      service.lastUpdate = new Date(); // Ping changes
+    }
+  });
+
+  return service;
 
 });
 
