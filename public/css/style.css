@@ -61,6 +61,10 @@ li .button {
     margin-top: 10px;
 }
 
+#playlist, .search-results {
+  overflow: hidden;
+}
+
 .score{
   text-align: right;
 }
@@ -77,6 +81,8 @@ li .button {
   padding-bottom: 0.5em;
 }
 
+/* Title bar */
+
 .main-title{
   margin-top: 1em;
 }
@@ -89,6 +95,23 @@ li .button {
   cursor: pointer;
 }
 
+.main-title .dot{
+  font-size: 2.5em;
+  line-height: 0;
+  letter-spacing: -0.15em;
+}
+
+.dot1{color: #FFDC00;}
+.dot2{color: #F012BE;}
+.dot3{color: #39CCCC; margin-right:5px;}
+
+
+/* Search */
+.row > p {
+  padding: 0px 10px;
+}
+
+
 .search-results .add {
   font-size: 55px;
   color: #555;
@@ -98,7 +121,7 @@ li .button {
 
 .search-results .add i {
   cursor: pointer;
-  line-height: 77px;
+  line-height: 72px;
 }
 
 .search {
@@ -115,8 +138,16 @@ li .button {
   color: #2ECC40; /*green*/
 }
 
+#search input{
+  font-size: 16px; /*No zoom in safari mobile*/
+  height: 40px;
+}
+
+
+
 /* Sliding the cooldowns */
 .track{
+  font-size: 1rem;
   position: relative;
   overflow: hidden;
   border-top: 1px solid #444;
@@ -161,60 +192,92 @@ li .button {
   margin-top: 20px;
 }
 
+
+
 /* Playlist reordering */
 /* c.f http://jsfiddle.net/jgoemat/kta95/3/ */
 .track.ng-move {
   position: relative;
-  top: 72px;
+  top: 73px;
   transition: all 0.5s ease;
 }
 
 
 .track.ng-move.ng-move-active {
-  transition: all 0.5s ease;
   top: 0;
 }
 
 .track.ng-move + li {
-    /* cannot have transition on this element */
-    /*transition: all 1s ease;*/
-    position: relative;
-    top: -72px;
+  position: relative;
+  top: -73px;
 }
 
 .track.ng-move.ng-move-active + li {
-    transition: all 0.5s ease;
-    position: relative;
-    top: 0;
+  transition: all 0.5s ease;
+  position: relative;
+  top: 0;
 }
 
 .track.ng-enter {
-    position: relative;
-    opacity: 0.0;
-    height: 0;
-    left: 100px;
+  height: 0;
+  opacity: 0; /*Trick for no flicker*/
+  transition: 1000ms linear all;
 }
 
 .track.ng-enter.ng-enter-active {
-    transition: all 0.5s ease;
-    opacity: 1.0;
-    left: 0;
-    height: 72px;
+  -webkit-animation: insert 1000ms;
 }
 
 .track.ng-leave {
-    position: relative;
-    opacity: 1.0;
-    left: 0;
-    height: 72px;
-    z-index: -100;
+  transition: 1000ms linear all;
 }
 
 .track.ng-leave.ng-leave-active {
-    transition: all 0.5s ease;
-    opacity: 0.0;
-    left: 100px;
-    height: 0;
-    top: -36px;
+  -webkit-animation: remove 1000ms;
 }
 
+
+/* Animations */
+@-webkit-keyframes insert{ 
+  /* Initial state : nothing */
+  0% {
+    height: 0;
+    opacity: 1;
+    right: 100%;
+  }
+
+  /* Open the space */
+  30% {
+    height: 73px;
+    opacity: 1;
+    right: 100%;
+  }
+
+  /* Slide the track from the left */
+  100% {
+    height: 73px;
+    opacity: 1;
+    right: 0;
+  }
+}
+
+
+@-webkit-keyframes remove{ 
+  /* Initial state : nothing */
+  0% {
+    left: 0;
+    height: 73px;
+  }
+
+  /* Slide to the right */
+  30% {
+    left: 100%;
+    height: 73px;
+  }
+
+  /* Close the space */
+  100% {
+    left: 100%;
+    height: 0;
+  }
+}

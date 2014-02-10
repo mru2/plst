@@ -1,4 +1,4 @@
-<html ng-app="app" ng-init="isSearch = true">
+<html ng-app="app">
   <head>
     <title>PLST</title>
 
@@ -53,6 +53,9 @@
 
     <div class="row">
       <h2 class="main-title">
+        <span class="dot dot1">.</span>
+        <span class="dot dot2">.</span>
+        <span class="dot dot3">.</span>
         plst
         <i class="fa fa-search" ng-click="isSearch = true" ng-show="!isSearch"></i>
         <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
@@ -63,9 +66,9 @@
     <!-- Search -->
     <div ng-controller="SearchCtrl" ng-show="isSearch">
 
-        <div class="row collapse search">
+        <div class="row collapse search" id="search">
           <div class="small-9 columns">
-            <input type="search" placeholder="Ajouter un morceau" ng-model="query"/>
+            <input id="search" type="search" placeholder="Ajouter un morceau" ng-model="query"/>
           </div>
           <div class="small-3 columns">
             <input type="submit" value="Go" class="button postfix" ng-click="doSearch()"/>
@@ -106,7 +109,13 @@
 
     <!-- Playlist -->
 
-    <ul id="results" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
+    <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
+      <div id="debug">
+        <p>DEBUG</p>
+        <button ng-click="pushTrack()">+</button>
+        <button ng-click="popTrack()">-</button>
+      </div>
+
       <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
           <div class="toggle-switch">
