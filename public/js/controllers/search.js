@@ -4,14 +4,11 @@
 
 angular.module('app').controller('SearchCtrl', function($scope, $socket) {
 
-  console.log('in SearchCtrl');
-
   $scope.query = '';
   $scope.searching = false;
   $scope.firstView = true;
 
   $scope.doSearch = function(){
-    console.log('searching', $scope.query);
     if ($scope.query == '') {
       return;
     }
@@ -28,15 +25,13 @@ angular.module('app').controller('SearchCtrl', function($scope, $socket) {
   };
 
   $scope.addTrack = function(track){
-    console.log('adding track', track);
     $socket.emit('addTrack', track);
     track.status = 'adding';
   };
 
   $socket.on('newTrack', function(track){
-    // Marking the track as added
-    console.log('new track : ', track);
 
+    // Marking the track as added
     var result = _.find($scope.results, function(result){
       return ( result.id === track.id );
     });

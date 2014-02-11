@@ -11,6 +11,7 @@ angular.module('app').factory('$socket', function($rootScope){
     on: function (eventName, callback) {
       socket.on(eventName, function () {  
         var args = arguments;
+        console.log('[SOCKET] received ' + eventName + ' with', args);
         $rootScope.$apply(function () {
           callback.apply(socket, args);
         });
@@ -18,6 +19,7 @@ angular.module('app').factory('$socket', function($rootScope){
     },
 
     emit: function (eventName, data, callback) {
+      console.log('[SOCKET] emitting ' + eventName + ' with', data);
       socket.emit(eventName, data, function () {
         var args = arguments;
         $rootScope.$apply(function () {

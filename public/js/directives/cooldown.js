@@ -77,11 +77,9 @@ angular.module('app').directive('cooldown', function(){
 
     // Render loop
     if(drawing === true){
-      console.log('already drawing');
-
+      // Nothing
     }
     else{
-      console.log('starting cooldown');
       drawing = true;
       former_ts = 0;
 

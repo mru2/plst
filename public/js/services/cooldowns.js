@@ -13,7 +13,6 @@ angular.module('app').factory('cooldowns', function($socket){
   Cooldown.prototype.use = function(track){
 
     track = track || this.track;
-    console.log('using cooldown', this, 'on track', track);
 
     // Check if ok
     if( Date.now() < this.lastClick + this.duration ){
@@ -21,7 +20,6 @@ angular.module('app').factory('cooldowns', function($socket){
     }
     else {
       // Update the track (todo in services also ...)
-      console.log('using cooldown', this.action, 'on', track);
       $socket.emit(this.action, {trackId: track.id});
 
       // Refresh the count
