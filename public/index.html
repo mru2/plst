@@ -110,12 +110,6 @@
     <!-- Playlist -->
 
     <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
-      <div id="debug">
-        <p>DEBUG</p>
-        <button ng-click="pushTrack()">+</button>
-        <button ng-click="popTrack()">-</button>
-      </div>
-
       <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
           <div class="toggle-switch">
