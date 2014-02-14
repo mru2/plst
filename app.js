@@ -1,18 +1,32 @@
-// Global variables
-var express = require('express')
-  , app     = express()
-  , server  = require('http').createServer(app)
-  , io      = require('socket.io').listen(server)
-  , port    = 14001;
+// Configuration
+var appPort     = 14001
+  , socketPort  = 3456;
+
+
+// Web apps
+var express       = require('express')
+  , app           = express()
+  , server        = require('http').createServer(app)
+  , socketServer  = require('http').createServer()
+  , io            = require('socket.io').listen(socketServer);
+
+
+// Launch apps
+// Separate port for sockets for 3G compatibility
+server.listen(appPort);
+console.log('App listening on port : ' + appPort);
+
+socketServer.listen(socketPort);
+console.log('Sockets listening on port : ' + socketPort);
+
+
+// Database
+var redis = require("redis").createClient();
 
 
 // Static files middleware
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + '/front'));
 
-
-// Launch server
-server.listen(port);
-console.log('Listening on port : ' + port);
 
 
 // For bootstraping the app
@@ -50,22 +64,6 @@ var addTrack = function(track){
 
 }
 
-// // Dot : +1 every second for x seconds
-// var dot = function(trackId, duration){
-
-//   var remaining = duration;
-
-//   var doDot = function(){
-//     upvote(trackId);
-//     remaining -= 1;
-//     if(remaining > 0){
-//       setTimeout(doDot, 1000);
-//     }
-//   };
-
-//   setTimeout(doDot, 1000);
-
-// };
 
 
 // Socket handlers
@@ -88,24 +86,4 @@ io.sockets.on('connection', function (socket) {
     addTrack(data);
   });
 
-  // Bomb : +10
-  // socket.on('bomb', function(data){
-  //   console.log('SOCKET : received bomb with', data);
-  //   upvote(data.trackId, 10);
-  // });
-
-  // Dot : +5 then +1 every second for 10 seconds
-  // socket.on('dot', function(data){
-  //   console.log('SOCKET : received dot with', data);
-
-  //   upvote(data.trackId, 5);
-  //   dot(data.trackId, 10);
-  // });
-
-  // socket.on('ping', function (data) {
-  //   console.log('Socket pinged with msg : ', data);
-
-  //   // Dispatching the message, because why not
-  //   socket.emit('ping', data);
-  // });
 });

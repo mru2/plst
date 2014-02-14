@@ -10,7 +10,7 @@ angular.module('app').directive('cooldown', function(){
       'width': config.size + 'px',
       'height': config.size + 'px',
       'border-width': (config.size/10),
-      'border-color': scope.cooldown.color,
+      'border-color': scope.cooldown.color
     };
 
     scope.circleStyle = {
@@ -52,6 +52,7 @@ angular.module('app').directive('cooldown', function(){
         // Custom event
         scope.$apply(function(){
           scope.circleStyle['-webkit-transform'] = null;
+          scope.circleStyle['transform'] = null;
           scope.circleStyle['opacity'] = null;
           scope.class = 'complete';
         });
@@ -65,6 +66,7 @@ angular.module('app').directive('cooldown', function(){
       scope.$apply(function(){
         scope.circleStyle['opacity'] = (1 - (completion)*0.7);
         scope.circleStyle['-webkit-transform'] = 'scale(' + completion + ')';
+        scope.circleStyle['transform'] = 'scale(' + completion + ')';
       });
 
 

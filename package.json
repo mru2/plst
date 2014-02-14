@@ -5,6 +5,8 @@
   "private": true,
   "dependencies": {
     "socket.io": "0.9",
-    "express": "3.x"
+    "express": "3.x",
+    "redis": "0.10.x",
+    "hiredis": "0.1.16"
   }
 }
