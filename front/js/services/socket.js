@@ -5,7 +5,7 @@
 
 angular.module('app').factory('$socket', function($rootScope){
 
-  var socket = io.connect('http://localhost:3456');
+  var socket = io.connect('http://' + location.hostname + ':3456');
 
   return {
     on: function (eventName, callback) {
