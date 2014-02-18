@@ -151,7 +151,22 @@ var addTrack = function(track){
 
   });
 
-}
+};
+
+
+// Add a multiply cooldown to a track
+var multiply = function(trackId){
+
+  // TODO : persist it
+
+  io.sockets.emit('multiply', {
+    id: trackId,
+    multiplier: 2,
+    started_at: Date.now(),
+    duration: 15000
+  });
+
+};
 
 
 
@@ -165,9 +180,15 @@ io.sockets.on('connection', function (socket) {
   });
 
   // Upvote
-  socket.on('vote', function(data){
+  socket.on('upvote', function(data){
     console.log('SOCKET : received vote with', data);
     upvote(data.trackId, 1);
+  });
+
+  // Multiply
+  socket.on('multiply', function(data){
+    console.log('SOCKET : received multiply with', data);
+    multiply(data.trackId);
   });
 
   // New track

@@ -206,8 +206,8 @@ li .button {
 /* Playlist reordering */
 /* c.f http://jsfiddle.net/jgoemat/kta95/3/ */
 .track.ng-move {
-  position: relative;
-  top: 73px;
+  -webkit-transform: translateY(73px);
+  transform: translateY(73px);
 
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
@@ -215,20 +215,21 @@ li .button {
 
 
 .track.ng-move.ng-move-active {
-  top: 0;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
 }
 
 .track.ng-move + li {
-  position: relative;
-  top: -73px;
+  -webkit-transform: translateY(-73px);
+  transform: translateY(-73px);
 }
 
 .track.ng-move.ng-move-active + li {
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
 
-  position: relative;
-  top: 0;
+  -webkit-transform: translateY(0px);
+  transform: translateY(0px);
 }
 
 .track.ng-enter {

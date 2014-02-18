@@ -35,16 +35,22 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     });
   });
 
-  // Handling updates
-  $socket.on('push', function(data){
-    _tracks[data.trackId].bump(data.score);
-  });
-
   // Monitor new incoming tracks
   $socket.on('newTrack', function(trackOpts){
     if (! _.has(_tracks, trackOpts.id)) {
       _tracks[trackOpts.id] = new Track(trackOpts);
     }
+  });
+
+
+  // Handling upvotes
+  $socket.on('push', function(data){
+    _tracks[data.trackId].bump(data.score);
+  });
+
+  // Handling multipliers
+  $socket.on('multiply', function(data){
+    console.log('TRACK : received multiply with', data);
   });
 
 
