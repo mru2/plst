@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
     <link rel="stylesheet" type="text/css" href="/css/cooldown.css">
+    <link rel="stylesheet" type="text/css" href="/css/multiplier.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 
     <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
@@ -37,6 +38,7 @@
     <script type="text/javascript" src="/js/services/tracks.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
+    <script type="text/javascript" src="/js/directives/multiplier.js"></script>
 
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
     <script type="text/javascript" src="/js/controllers/search.js"></script>
@@ -46,17 +48,7 @@
   <body>
     <div id="dz-root"></div>
 
-<!--     <form id="searchForm">
-      <div class="row collapse">
-        <div class="small-9 columns">
-          <input id="search" type="text" placeholder="Search"/>
-        </div>
-        <div class="small-3 columns">
-          <input type="submit" value="Rechercher" class="button postfix"/>
-        </div>
-      </div>
-    </form> -->
-
+    <!-- Header -->
     <div class="row">
       <h2 class="main-title">
         <span class="dot dot1">.</span>
@@ -114,7 +106,6 @@
 
 
     <!-- Playlist -->
-
     <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
       <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
 
@@ -137,6 +128,7 @@
 
             <div class="small-3 columns score">
               <span>{{ track.score }}</span>
+              <multiplier strength="track.multiplier_strength" start="track.multiplier_start"></multiplier>
             </div>
 
             <div class="small-9 columns track-details">

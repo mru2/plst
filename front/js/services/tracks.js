@@ -8,7 +8,9 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     this.artist = opts.artist;
     this.title = opts.title;
     this.cooldown = cooldowns.upvote(this);
-  }
+    this.multiplier_strength = 1;
+    this.multiplier_start = undefined;
+  };
 
   Track.prototype.bump = function(score) {
     var track = this;
@@ -22,14 +24,20 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     }
 
     bumpOne();
-  }
+  };
+
+
+  // Multiplier checking
+  Track.prototype.has_multiplier = function() {
+    return (Date.now() < (this.multiplier_start + 15000));
+  };
 
 
   // Current tracks, indexed by id
   var _tracks = {};
 
   // Bootstraping the playlist
-  $socket.on('connected', function(data){
+  $socket.on('bootstrap', function(data){
     _.each(data, function(trackOpts){
       _tracks[trackOpts.id] = new Track(trackOpts);
     });
@@ -42,7 +50,6 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     }
   });
 
-
   // Handling upvotes
   $socket.on('push', function(data){
     _tracks[data.trackId].bump(data.score);
@@ -51,8 +58,13 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
   // Handling multipliers
   $socket.on('multiply', function(data){
     console.log('TRACK : received multiply with', data);
+    _tracks[data.id].multiplier_strength = data.strength;
+    _tracks[data.id].multiplier_start = data.started_at;
   });
 
+
+  // Initialize the tracks content
+  $socket.emit('bootstrap');
 
   return _tracks;
 
