@@ -63,11 +63,16 @@ var addTrack = function(track){
 var multiply = function(trackId){
 
   // TODO : persist it
+  db.multiply(trackId, function(strength, start){
+    
+    console.log('multiplying with', strength, start);
 
-  io.sockets.emit('multiply', {
-    id: trackId,
-    strength: 2,
-    started_at: Date.now()
+    io.sockets.emit('multiply', {
+      id: trackId,
+      strength: strength,
+      started_at: start
+    });
+
   });
 
 };

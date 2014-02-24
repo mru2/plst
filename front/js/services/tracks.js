@@ -8,8 +8,8 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     this.artist = opts.artist;
     this.title = opts.title;
     this.cooldown = cooldowns.upvote(this);
-    this.multiplier_strength = 1;
-    this.multiplier_start = undefined;
+    this.multiplier_strength = opts.multiplier_strength;
+    this.multiplier_start = opts.multiplier_start;
   };
 
   Track.prototype.bump = function(score) {

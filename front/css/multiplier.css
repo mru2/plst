@@ -6,3 +6,19 @@ multiplier{
   color: #FFDC00;
   font-size: 12px;
 }
+
+multiplier .progress-bar{
+  text-align: left;
+  height: 4px;
+  margin-bottom: 7px;
+  width: 27px;
+  margin-left: 6px;
+  display: inline-block;
+}
+
+multiplier .progress-bar span{
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  background-color: #FFDC00;
+}

@@ -4,7 +4,7 @@ angular.module('app').directive('multiplier', function(){
     scope.active = false;
 
     var render = function(){
-      scope.completion = ( Date.now() - scope.start ) / 15000;
+      scope.completion = ( Date.now() - scope.start ) / 10000;
 
       if (scope.completion >= 1) {
         // Stop drawing
@@ -22,7 +22,7 @@ angular.module('app').directive('multiplier', function(){
     };
 
     // Start render loop if not active and there is time
-    if (!scope.active && scope.start >= (Date.now() - 15000)) {
+    if (!scope.active && scope.start >= (Date.now() - 10000)) {
       console.log('start drawing');
       scope.active = true;
       requestAnimationFrame(render);
@@ -31,6 +31,7 @@ angular.module('app').directive('multiplier', function(){
   };
 
   var link = function(scope, element, attrs){
+
     console.log('linking multiplier with', scope, element, attrs);
 
     scope.$watch('start', function() {
@@ -38,8 +39,6 @@ angular.module('app').directive('multiplier', function(){
     });
 
     startCooldown(scope);
-
-    // Watch the change in start / strenght, to rerender
 
   };
 

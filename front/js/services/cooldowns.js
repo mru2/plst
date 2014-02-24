@@ -44,10 +44,10 @@ angular.module('app').factory('cooldowns', function($socket){
 
   return {
     upvote: function(track){
-      return new Cooldown({ action: "upvote", iconCode: 0xf005, duration: 1000, color: '#39CCCC', lastClick: lastClick, track: track })
+      return new Cooldown({ action: "upvote", iconCode: 0xf005, duration: 3000, color: '#39CCCC', lastClick: lastClick, track: track })
     },
-    multiply: new Cooldown({ action: "multiply",  iconCode: 0xf110, duration: 3000, color: '#FFDC00', lastClick: lastClick }),
-    spotlight: new Cooldown({ action: "spotlight", iconCode: 0xf135, duration: 8000, color: '#F012BE', lastClick: lastClick })
+    multiply: new Cooldown({ action: "multiply",  iconCode: 0xf110, duration: 7000, color: '#FFDC00', lastClick: lastClick }),
+    spotlight: new Cooldown({ action: "spotlight", iconCode: 0xf135, duration: 15000, color: '#F012BE', lastClick: lastClick })
   };
 
 });

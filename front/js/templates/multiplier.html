@@ -1,3 +1,3 @@
 <div ng-show="active">
-  {{strength}} x <progress value="{{completion}}" max="1"></progress>
+  x {{strength}} <span class="progress-bar"><span style="width: {{100 - (completion*100)}}%;"></span></span>
 </div>
