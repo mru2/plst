@@ -52,7 +52,8 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
   // Handling upvotes
   $socket.on('push', function(data){
-    _tracks[data.trackId].bump(data.score);
+    var track = _tracks[data.trackId];
+    track.bump(data.score - track.score);
   });
 
   // Handling multipliers

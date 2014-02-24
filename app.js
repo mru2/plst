@@ -25,57 +25,6 @@ console.log('Sockets listening on port : ' + socketPort);
 app.use(express.static(__dirname + '/front'));
 
 
-// Upvote a track : instant +x
-var upvote = function(trackId, score){
-  score = score || 1;
-
-  console.log('upvoting track', trackId);
-
-  db.upvote(trackId, function(score){
-    io.sockets.emit('push', {trackId: trackId, score: score});
-  });
-
-};
-
-
-// Add a track to the playlist
-var addTrack = function(track){
-
-  // Actually add the track
-  db.add(track, function(err, res){
-
-    console.log('track added', track, 'err is', err, 'res is', res);
-
-    io.sockets.emit('newTrack', {
-      id: track.id,
-      title: track.title,
-      artist: track.artist.name,
-      score: 1
-    });
-
-  });
-
-};
-
-
-// Add a multiply cooldown to a track
-var multiply = function(trackId){
-
-  // TODO : persist it
-  db.multiply(trackId, function(strength, start){
-    
-    console.log('multiplying with', strength, start);
-
-    io.sockets.emit('multiply', {
-      id: trackId,
-      strength: strength,
-      started_at: start
-    });
-
-  });
-
-};
-
 
 
 // Socket handlers
@@ -84,28 +33,62 @@ io.sockets.on('connection', function (socket) {
   // Bootstrap data
   socket.on('bootstrap', function(){
     console.log('SOCKET : boostraping');
-    db.all(function(bootstrapData){
-      console.log('Bootstraping app with', bootstrapData);
-      socket.emit('bootstrap', bootstrapData);
-    });
+
+    db.all().then(function(playlist){
+
+      console.log('Bootstraping app with', playlist);
+      socket.emit('bootstrap', playlist);
+
+    }).done();
   });
 
   // Upvote
   socket.on('upvote', function(data){
-    console.log('SOCKET : received vote with', data);
-    upvote(data.trackId, 1);
+    console.log('SOCKET : received upvote with', data);
+
+    db.upvote(data.trackId).then(function(newScore){
+
+      console.log('SOCKET : sending push with', data.trackId, newScore);
+      io.sockets.emit('push', {trackId: data.trackId, score: newScore});
+
+    }).done();
   });
 
   // Multiply
   socket.on('multiply', function(data){
     console.log('SOCKET : received multiply with', data);
-    multiply(data.trackId);
+
+    db.multiply(data.trackId).then(function(res){
+
+      console.log('SOCKET : sending multiply with', data.trackId, res);
+      io.sockets.emit('multiply', {
+        id: data.trackId,
+        strength: res.strength,
+        started_at: res.start
+      });
+
+    }).done();
   });
 
   // New track
   socket.on('addTrack', function(data){
     console.log('SOCKET : received addTrack with', data);
-    addTrack(data);
+
+    db.add({
+      id: data.id,
+      artist: data.artist.name,
+      title: data.title
+    }).then(function(track){
+
+      console.log('SOCKET : sending newTrack with', track);
+      io.sockets.emit('newTrack', {
+        id: track.id,
+        title: track.title,
+        artist: track.artist,
+        score: 1
+      });
+
+    }).done();
   });
 
 });

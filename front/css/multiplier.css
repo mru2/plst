@@ -1,7 +1,7 @@
 multiplier{
   display: block;
-  height: 20px;
-  line-height: 20px;
+  height: 12px;
+  line-height: 12px;
   margin-bottom: 10px;
   color: #FFDC00;
   font-size: 12px;
@@ -10,7 +10,7 @@ multiplier{
 multiplier .progress-bar{
   text-align: left;
   height: 4px;
-  margin-bottom: 7px;
+  margin-bottom: 4px;
   width: 27px;
   margin-left: 6px;
   display: inline-block;
