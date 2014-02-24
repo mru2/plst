@@ -31,8 +31,7 @@ var upvote = function(trackId, score){
 
   console.log('upvoting track', trackId);
 
-  db.upvote(trackId, function(err, res){
-    console.log('upvoted track', trackId, 'err is', err, 'and res is', res);
+  db.upvote(trackId, function(score){
     io.sockets.emit('push', {trackId: trackId, score: score});
   });
 

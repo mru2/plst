@@ -16,11 +16,6 @@ var addTrackDetails = function(track, cb){
 var incrTrack = function(id, score, cb){
   console.log('REDIS - incrementing track', id, 'by', score);
 
-  var key = detailsKey(id);
-
-  // Check multiplier
-  // TODO ...
-
   redis.zincrby(tracksKey, score, id, cb);
 };
 
@@ -30,6 +25,21 @@ var topTracks = function(cb){
 
 var getTrackDetails = function(id, cb){
   redis.hgetall(detailsKey(id), cb);
+};
+
+var getTrackMultiplier = function(id, cb){
+
+  var multiplierDuration = 10000;
+
+  getTrackDetails(id, function(err, track){
+    if (!!track.multiplier_start && !!parseInt(track.multiplier_strength) && (Date.now() < ( parseInt(track.multiplier_start) + multiplierDuration ))) {
+      cb(parseInt(track.multiplier_strength));
+    }
+    else {
+      cb(1);
+    }
+  });
+
 };
 
 var pushMultiplier = function(trackId, strength, cb){
@@ -54,27 +64,16 @@ module.exports = {
   },
 
   upvote: function(id, cb){
-    incrTrack(id, 1, cb);
+    getTrackMultiplier(id, function(strength){
+      incrTrack(id, strength, function(){
+        cb(strength);
+      });
+    });
   },
 
   multiply: function(id, cb){
-    getTrackDetails(id, function(err, track){
-
-      // Check if counter is reset or incremented
-      console.log('got track', track);
-
-      var strength;
-
-      if (!!track.multiplier_start && (Date.now() < ( parseInt(track.multiplier_start) + 10000 ) )){
-        console.log('incrementing multiplier');
-        var existingStrength = parseInt(track.multiplier_strength);        
-        strength = (!!existingStrength) ? (existingStrength + 1) : 2;
-      }
-      else {
-        console.log('starting multiplier');
-        strength = 2;
-      }
-
+    getTrackMultiplier(id, function(multiplier){
+      strength = multiplier + 1;
       pushMultiplier(id, strength, cb);
     });
   },
