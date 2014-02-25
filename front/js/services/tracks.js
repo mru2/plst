@@ -38,7 +38,6 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
   // Bootstraping the playlist
   $socket.on('bootstrap', function(data){
-    log('received bootstrap');
     _.each(data, function(trackOpts){
       _tracks[trackOpts.id] = new Track(trackOpts);
     });
@@ -66,7 +65,6 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
 
   // Initialize the tracks content
-  log('emitting bootstrap');
   $socket.emit('bootstrap');
 
   return _tracks;
