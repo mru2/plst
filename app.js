@@ -30,6 +30,9 @@ app.use(express.static(__dirname + '/front'));
 // Socket handlers
 io.sockets.on('connection', function (socket) {
 
+  console.log('SOCKET : connected');
+  socket.emit('connected');
+
   // Bootstrap data
   socket.on('bootstrap', function(){
     console.log('SOCKET : boostraping');
