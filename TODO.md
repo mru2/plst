@@ -1,14 +1,12 @@
-## Priority 0 (core features)
- - redis persistence
- - player integration
- - test on real hardware
+- icons
+- message when no tracks
+- spotlight integration
+- player integration
+- server time synchronization
 
-## Priority 1 (blocking bugs)
- - handle socket disconnection
- - cooldown rendering on old iphones (ios5)
+[...]
+- help
+- packaging
 
-## Priority 2 (missing new features)
- - spotlight cooldown
- - multiplier cooldown
- - help
- - on-demand room
+[...]
+- on demand room

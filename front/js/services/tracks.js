@@ -41,6 +41,8 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     _.each(data, function(trackOpts){
       _tracks[trackOpts.id] = new Track(trackOpts);
     });
+
+    $rootScope.appLoaded = true;
   });
 
   // Monitor new incoming tracks

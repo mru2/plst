@@ -25,9 +25,6 @@
     <script type="text/javascript" src="/js/vendor/animationframe.js"></script>
     <script type="text/javascript">
       AnimationFrame.shim();
-      window.log = function(text){
-        $('#debug').append('<p>' + '<small>' + Date.now() + '</small> - ' + text  + '</p>');
-      };
     </script>
 
 
@@ -52,21 +49,35 @@
   <body>
     <div id="dz-root"></div>
 
-    <!-- Header -->
-    <div class="row">
-      <h2 class="main-title">
-        <span class="dot dot1">.</span>
-        <span class="dot dot2">.</span>
-        <span class="dot dot3">.</span>
-        plst
-        <i class="fa fa-search" ng-click="isSearch = true" ng-show="!isSearch"></i>
-        <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
-      </h2>
+    <div ng-hide="appLoaded">
+      <div id="loading">
+        <div class="spinner">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </div>
+
+        <p>Loading...</p>
+      </div>
     </div>
 
+    <div ng-cloak ng-show="appLoaded">
 
-    <!-- Search -->
-    <div ng-controller="SearchCtrl" ng-show="isSearch">
+      <!-- Header -->
+      <div class="row">
+        <h2 class="main-title">
+          <span class="dot dot1">.</span>
+          <span class="dot dot2">.</span>
+          <span class="dot dot3">.</span>
+          plst
+          <i class="fa fa-search" ng-click="isSearch = true" ng-show="!isSearch"></i>
+          <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
+        </h2>
+      </div>
+
+
+      <!-- Search -->
+      <div ng-controller="SearchCtrl" ng-show="isSearch">
 
         <div class="row collapse search" id="search">
           <div class="small-9 columns">
@@ -81,8 +92,12 @@
           <p>Recherchez un artiste ou un titre, puis appuyez sur <i class="fa fa-plus-circle"></i> pour le rajouter à la playlist en cours.</p>
         </div>
 
-        <div class="row spinner" ng-show="searching">
-          <i class="fa fa-spinner fa-spin"></i>
+        <div class="row searching" ng-show="searching">
+          <div class="spinner">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </div>
         </div>
 
         <ul class="search-results row" ng-hide="searching">
@@ -106,48 +121,50 @@
 
       </div>
 
-    </div>
 
+      <!-- Playlist -->
+      <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
 
-    <!-- Playlist -->
-    <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
-      <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
-
-          <div class="toggle-switch">
-            <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
-          </div>
-
-          <div class="back">
-            <div class="cooldowns">
-              <cooldown 
-                ng-repeat="cooldown in hiddenCooldowns" 
-                cooldown = "cooldown"
-                ng-click="cooldown.use(track)"
-                size="40">
-              </cooldown>
-            </div>
-          </div>
-
-          <div class="front row"  ng-click="toggleSlide(track)">
-
-            <div class="small-3 columns score">
-              <span>{{ track.score }}</span>
-              <multiplier strength="track.multiplier_strength" start="track.multiplier_start"></multiplier>
-            </div>
-
-            <div class="small-9 columns track-details">
-              <em>{{ track.artist }}</em>
-              <strong>{{ track.title }}</strong>
-            </div>
-
-          </div>
-
-
+        <div ng-show="playlist.length === 0">
+          <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
         </div>
-      </li>
-    </ul>
 
-    <div id="debug">
+        <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
+
+            <div class="toggle-switch">
+              <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
+            </div>
+
+            <div class="back">
+              <div class="cooldowns">
+                <cooldown 
+                  ng-repeat="cooldown in hiddenCooldowns" 
+                  cooldown = "cooldown"
+                  ng-click="cooldown.use(track)"
+                  size="40">
+                </cooldown>
+              </div>
+            </div>
+
+            <div class="front row"  ng-click="toggleSlide(track)">
+
+              <div class="small-3 columns score">
+                <span>{{ track.score }}</span>
+                <multiplier strength="track.multiplier_strength" start="track.multiplier_start"></multiplier>
+              </div>
+
+              <div class="small-9 columns track-details">
+                <em>{{ track.artist }}</em>
+                <strong>{{ track.title }}</strong>
+              </div>
+
+            </div>
+
+
+          </div>
+        </li>
+      </ul>
+
     </div>
 
   </body>

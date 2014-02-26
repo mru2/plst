@@ -2,7 +2,7 @@
 // Playlist controller
 // ===================
 
-angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, $socket, cooldowns, tracks) {
+angular.module('app').controller('PlaylistCtrl', function($scope, cooldowns, tracks) {
 
   $scope.hiddenCooldowns = [cooldowns.multiply, cooldowns.spotlight];
 
