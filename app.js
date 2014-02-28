@@ -36,10 +36,10 @@ io.sockets.on('connection', function (socket) {
   // Run synchronisation loop. Every 10sec
   var syncLoop = setInterval(function(){
     console.log('syncing!');
-    socket.emit('sync', Date.now() + 10000);
+    socket.emit('sync', Date.now());
   }, 10000);
 
-  socket.emit('sync', Date.now() + 10000);
+  socket.emit('sync', Date.now());
 
   socket.on('disconnect', function(){
     console.log('stop syncing');
@@ -49,7 +49,7 @@ io.sockets.on('connection', function (socket) {
   // Synchronisation pingback
   socket.on('pingback', function(){
     console.log('SOCKET : pingback');
-    socket.emit('pingback', Date.now() + 10000);
+    socket.emit('pingback', Date.now());
   });
 
   // Synchronize clocks
