@@ -17,7 +17,14 @@ angular.module('app').factory('ServerDate', function($socket, $rootScope){
     times[2] = t2;
     times[3] = Date.now();
 
-    offset = ((times[3] - times[0]) - (times[2] - times[1])) / 2;
+    // Assume request/response times are equivalent...
+    var d1 = times[1] - times[0];
+    var d2 = times[2] - times[0];
+    var d3 = times[3] - times[0];
+
+    offset = (d1 + d3 - d2) / 2;
+
+    console.log('synced. offset is', offset);
     $rootScope.synced = true;
   });
 
