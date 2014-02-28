@@ -22,10 +22,10 @@ angular.module('app').directive('cooldown', function(){
     };
 
     scope.iconStyle = {
-      'font-size': (config.size*0.6)+ 'px',
+      'font-size': (config.size*0.5)+ 'px',
       'width': (config.size*0.9) + 'px',
       'height': (config.size*0.9) + 'px',
-      'line-height': (config.size*0.9) + 'px'
+      'line-height': (config.size*0.9) + 2 + 'px'
     };
 
     scope.iconChar = String.fromCharCode(scope.cooldown.iconCode);
@@ -46,29 +46,36 @@ angular.module('app').directive('cooldown', function(){
       // Get the completion (0 to 1)
       var completion = scope.cooldown.completion();
 
-      // Handle just finished state
-      if (completion === 1){
+      // Handle loading state
+      if (scope.cooldown.loading) {
+        scope.class = 'complete loading';
         drawing = false;
-        // Custom event
-        scope.$apply(function(){
-          scope.circleStyle['-webkit-transform'] = null;
-          scope.circleStyle['transform'] = null;
-          scope.circleStyle['opacity'] = null;
-          scope.class = 'complete';
-        });
-        return;
       }
+
+      // Handle just finished state (no rendering after..)
       else {
-        scope.class = '';
+        if (completion === 1){
+          drawing = false;
+          // Custom event
+          scope.$apply(function(){
+            scope.circleStyle['-webkit-transform'] = null;
+            scope.circleStyle['transform'] = null;
+            scope.circleStyle['opacity'] = null;
+            scope.class = 'complete';
+          });
+          return;
+        }
+        else {
+          scope.class = '';          
+        }
+
+        // Handle completion state
+        scope.$apply(function(){
+          scope.circleStyle['opacity'] = (1 - (completion)*0.7);
+          scope.circleStyle['-webkit-transform'] = 'scale(' + completion + ')';
+          scope.circleStyle['transform'] = 'scale(' + completion + ')';
+        });
       }
-
-      // Handle completion state
-      scope.$apply(function(){
-        scope.circleStyle['opacity'] = (1 - (completion)*0.7);
-        scope.circleStyle['-webkit-transform'] = 'scale(' + completion + ')';
-        scope.circleStyle['transform'] = 'scale(' + completion + ')';
-      });
-
 
       // Continue the render loop
       if (drawing === true){
@@ -104,6 +111,10 @@ angular.module('app').directive('cooldown', function(){
     startCooldown(scope);
 
     // Watch changes (tochange)
+    scope.$watch('cooldown.loading', function() {
+      startCooldown(scope);
+    });
+
     scope.$watch('cooldown.lastClick', function() {
       startCooldown(scope);
     });

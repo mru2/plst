@@ -1,15 +1,14 @@
-angular.module('app').directive('multiplier', function(){
+angular.module('app').directive('multiplier', function(ServerDate){
 
   var startCooldown = function(scope){
     scope.active = false;
 
     var render = function(){
-      scope.completion = ( Date.now() - scope.start ) / 10000;
+      scope.completion = ( ServerDate.now() - scope.start ) / 10000;
 
       if (scope.completion >= 1) {
         // Stop drawing
         scope.active = false;
-        console.log('stop drawing!!');
       };
 
       // Force rendering
@@ -22,8 +21,7 @@ angular.module('app').directive('multiplier', function(){
     };
 
     // Start render loop if not active and there is time
-    if (!scope.active && scope.start >= (Date.now() - 10000)) {
-      console.log('start drawing');
+    if (!scope.active && scope.start >= (ServerDate.now() - 10000)) {
       scope.active = true;
       requestAnimationFrame(render);
     }

@@ -60,6 +60,10 @@ cooldown .kudo.complete a.kudobject div.opening div.circle i{
   /*-moz-background-size:80%;*/
 }
 
+cooldown .kudo.loading .circle i{
+  -webkit-animation: spin 500ms infinite linear;
+}
+
 cooldown a.kudobject{
   display: block;
   cursor: pointer;
@@ -168,5 +172,14 @@ cooldown .kudo.complete-remove a.kudobject div.opening div.circle{
   to { 
     -webkit-transform: scale(2);
     opacity:0;
+  }
+}
+
+@-webkit-keyframes spin { 
+  from { 
+    -webkit-transform: rotate(0deg);
+  }
+  to { 
+    -webkit-transform: rotate(360deg);
   }
 }

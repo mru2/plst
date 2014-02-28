@@ -4,5 +4,4 @@ var io = window.io;
 
 var app = angular.module('app', [
   'ngAnimate',
-  'ngTouch'
 ]);

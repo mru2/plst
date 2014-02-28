@@ -8,6 +8,7 @@ angular.module('app').factory('cooldowns', function($socket){
     this.color = opts.color;
     this.lastClick = opts.lastClick;
     this.track = opts.track;
+    this.loading = false;
   }
 
   Cooldown.prototype.use = function(track){
@@ -19,11 +20,14 @@ angular.module('app').factory('cooldowns', function($socket){
       return;
     }
     else {
-      // Update the track (todo in services also ...)
-      $socket.emit(this.action, {trackId: track.id});
+      this.loading = true;
+      var cooldown = this;
 
-      // Refresh the count
-      this.lastClick = Date.now();
+      // Update the track (todo in services also ...)
+      $socket.emit(this.action, {trackId: track.id}, function(){
+        cooldown.loading = false;
+        cooldown.lastClick = Date.now();
+      });
     }
 
   }
@@ -44,10 +48,10 @@ angular.module('app').factory('cooldowns', function($socket){
 
   return {
     upvote: function(track){
-      return new Cooldown({ action: "upvote", iconCode: 0xf005, duration: 3000, color: '#39CCCC', lastClick: lastClick, track: track })
+      return new Cooldown({ action: "upvote", iconCode: 0xf067, duration: 3000, color: '#39CCCC', lastClick: lastClick, track: track })
     },
-    multiply: new Cooldown({ action: "multiply",  iconCode: 0xf110, duration: 7000, color: '#FFDC00', lastClick: lastClick }),
-    spotlight: new Cooldown({ action: "spotlight", iconCode: 0xf135, duration: 15000, color: '#F012BE', lastClick: lastClick })
+    multiply: new Cooldown({ action: "multiply",  iconCode: 0xf0e7, duration: 7000, color: '#FFDC00', lastClick: lastClick }),
+    spotlight: new Cooldown({ action: "spotlight", iconCode: 0xf004, duration: 15000, color: '#F012BE', lastClick: lastClick })
   };
 
 });

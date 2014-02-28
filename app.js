@@ -33,6 +33,31 @@ io.sockets.on('connection', function (socket) {
   console.log('SOCKET : connected');
   socket.emit('connected');
 
+  // Run synchronisation loop. Every 10sec
+  var syncLoop = setInterval(function(){
+    console.log('syncing!');
+    socket.emit('sync', Date.now());
+  }, 10000);
+
+  socket.emit('sync', Date.now());
+
+  socket.on('disconnect', function(){
+    console.log('stop syncing');
+    clearInterval(syncLoop);
+  });
+
+  // Synchronisation pingback
+  socket.on('pingback', function(){
+    console.log('SOCKET : pingback');
+    socket.emit('pingback', Date.now());
+  });
+
+  // Synchronize clocks
+  socket.on('clock', function(){
+    var now = Date.now();
+    socket.emit('clock', now);
+  });
+
   // Bootstrap data
   socket.on('bootstrap', function(){
     console.log('SOCKET : boostraping');
@@ -46,19 +71,19 @@ io.sockets.on('connection', function (socket) {
   });
 
   // Upvote
-  socket.on('upvote', function(data){
+  socket.on('upvote', function(data, cb){
     console.log('SOCKET : received upvote with', data);
 
     db.upvote(data.trackId).then(function(newScore){
 
-      console.log('SOCKET : sending push with', data.trackId, newScore);
       io.sockets.emit('push', {trackId: data.trackId, score: newScore});
+      cb(true);
 
     }).done();
   });
 
   // Multiply
-  socket.on('multiply', function(data){
+  socket.on('multiply', function(data, cb){
     console.log('SOCKET : received multiply with', data);
 
     db.multiply(data.trackId).then(function(res){
@@ -69,6 +94,7 @@ io.sockets.on('connection', function (socket) {
         strength: res.strength,
         started_at: res.start
       });
+      cb(true);
 
     }).done();
   });

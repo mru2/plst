@@ -21,7 +21,6 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-animate.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-touch.js"></script>
     <script type="text/javascript" src="/js/vendor/animationframe.js"></script>
     <script type="text/javascript">
       AnimationFrame.shim();
@@ -37,6 +36,7 @@
     <script type="text/javascript" src="/js/services/socket.js"></script>
     <script type="text/javascript" src="/js/services/cooldowns.js"></script>
     <script type="text/javascript" src="/js/services/tracks.js"></script>
+    <script type="text/javascript" src="/js/services/server-date.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
     <script type="text/javascript" src="/js/directives/multiplier.js"></script>
@@ -129,7 +129,7 @@
           <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
         </div>
 
-        <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''" ng-swipe-right="openSlide(track)" ng-swipe-left="closeSlide()">
+        <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''">
 
             <div class="toggle-switch">
               <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
