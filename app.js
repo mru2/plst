@@ -33,31 +33,6 @@ io.sockets.on('connection', function (socket) {
   console.log('SOCKET : connected');
   socket.emit('connected');
 
-  // Run synchronisation loop. Every 10sec
-  var syncLoop = setInterval(function(){
-    console.log('syncing!');
-    socket.emit('sync', Date.now());
-  }, 10000);
-
-  socket.emit('sync', Date.now());
-
-  socket.on('disconnect', function(){
-    console.log('stop syncing');
-    clearInterval(syncLoop);
-  });
-
-  // Synchronisation pingback
-  socket.on('pingback', function(){
-    console.log('SOCKET : pingback');
-    socket.emit('pingback', Date.now());
-  });
-
-  // Synchronize clocks
-  socket.on('clock', function(){
-    var now = Date.now();
-    socket.emit('clock', now);
-  });
-
   // Bootstrap data
   socket.on('bootstrap', function(){
     console.log('SOCKET : boostraping');

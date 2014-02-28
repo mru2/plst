@@ -1,12 +1,12 @@
-- spotlight integration
+- new multiplier/spotlight
 - player integration
-- back button
-- render bug when loading
 
 
 [...]
 - help
 - packaging
+- back button
+- render bug when loading
 
 [...]
 - on demand room

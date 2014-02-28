@@ -1,5 +1,5 @@
 
-angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns, ServerDate){
+angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns){
 
   $rootScope.appLoaded = false;  
 
@@ -10,8 +10,7 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     this.artist = opts.artist;
     this.title = opts.title;
     this.cooldown = cooldowns.upvote(this);
-    this.multiplier_strength = opts.multiplier_strength;
-    this.multiplier_start = opts.multiplier_start;
+    this.stars = opts.stars;
   };
 
   Track.prototype.bump = function(score) {
@@ -26,12 +25,6 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     }
 
     bumpOne();
-  };
-
-
-  // Multiplier checking
-  Track.prototype.has_multiplier = function() {
-    return (ServerDate.now() < (this.multiplier_start + 15000));
   };
 
 
@@ -60,20 +53,9 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     track.bump(data.score - track.score);
   });
 
-  // Handling multipliers
-  $socket.on('multiply', function(data){
-    console.log('TRACK : received multiply with', data);
-    _tracks[data.id].multiplier_strength = data.strength;
-    _tracks[data.id].multiplier_start = data.started_at;
-  });
-
 
   // Initialize the tracks content, when synced
-  $rootScope.$watch('synced', function(val){
-    if(!!val){
-      $socket.emit('bootstrap');
-    }
-  });
+  $socket.emit('bootstrap');
 
   return _tracks;
 

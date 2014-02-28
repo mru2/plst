@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
     <link rel="stylesheet" type="text/css" href="/css/cooldown.css">
-    <link rel="stylesheet" type="text/css" href="/css/multiplier.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 
     <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
@@ -36,10 +35,8 @@
     <script type="text/javascript" src="/js/services/socket.js"></script>
     <script type="text/javascript" src="/js/services/cooldowns.js"></script>
     <script type="text/javascript" src="/js/services/tracks.js"></script>
-    <script type="text/javascript" src="/js/services/server-date.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
-    <script type="text/javascript" src="/js/directives/multiplier.js"></script>
 
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
     <script type="text/javascript" src="/js/controllers/search.js"></script>
@@ -49,7 +46,7 @@
   <body>
     <div id="dz-root"></div>
 
-    <div ng-hide="appLoaded && synced">
+    <div ng-hide="appLoaded">
       <div id="loading">
         <div class="spinner">
           <span class="bar"></span>
@@ -61,7 +58,7 @@
       </div>
     </div>
 
-    <div ng-cloak ng-show="appLoaded && synced">
+    <div ng-cloak ng-show="appLoaded">
 
       <!-- Header -->
       <div class="row">
@@ -137,12 +134,11 @@
 
             <div class="back">
               <div class="cooldowns">
-                <cooldown 
-                  ng-repeat="cooldown in hiddenCooldowns" 
-                  cooldown = "cooldown"
-                  ng-click="cooldown.use(track)"
-                  size="40">
-                </cooldown>
+
+                <div class="star" ng-class="(currentStar === track) ? 'active' : ''" ng-click="doStar(track)">
+                  <i class="fa" ng-class="(currentStar === track) ? 'fa-star' : 'fa-star-o'"></i>
+                </div>
+
               </div>
             </div>
 
@@ -150,7 +146,9 @@
 
               <div class="small-3 columns score">
                 <span>{{ track.score }}</span>
-                <multiplier strength="track.multiplier_strength" start="track.multiplier_start"></multiplier>
+                <div class="stars" ng-show="track.stars > 0">
+                  <i class="fa fa-star"></i> × {{track.stars}}
+                </div>
               </div>
 
               <div class="small-9 columns track-details">

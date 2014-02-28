@@ -7,7 +7,18 @@ angular.module('app').controller('PlaylistCtrl', function($scope, cooldowns, tra
   $scope.hiddenCooldowns = [cooldowns.multiply, cooldowns.spotlight];
 
   $scope.currentTrack = null;
+  $scope.currentStar = null;
   $scope.tracks = tracks;
+
+  $scope.doStar = function(track) {
+    if ($scope.currentStar === track) {
+      $scope.currentStar = null;
+    }
+    else {
+      $scope.currentStar = track;
+    }
+  };
+
 
   $scope.openSlide = function(track) {
     $scope.currentTrack = track;

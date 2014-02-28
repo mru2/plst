@@ -100,11 +100,36 @@ li .button {
     font-size: 40px;
     color: #555;
 }
-
-.cooldowns{
-  padding: 12px 0px;
+.stars{
+  height: 12px;
+  line-height: 12px;
+  margin-bottom: 10px;
+  color: #FFDC00;
+  font-size: 11px;
 }
 
+.cooldowns{
+  padding: 12px 10px;
+}
+
+.star{
+  font-size: 52px;
+  line-height: 52px;
+  color: #999;
+  -webkit-transform: scale(1);
+  opacity: 1;
+  transition: 200ms ease all;
+  -webkit-transition: 200ms ease all;
+}
+
+.star.active{
+  color: #FFDC00;
+}
+
+.star.active-add{
+  -webkit-transform: scale(1.5);
+  opacity: 0.5;
+}
 
 /* Title bar */
 
@@ -186,8 +211,8 @@ li .button {
 }
 
 .track.slide .front{
-  -webkit-transform: translateX(120px);
-  transform: translateX(120px); 
+  -webkit-transform: translateX(90px);
+  transform: translateX(90px); 
 }
 
 .track .track-details{

@@ -29,8 +29,7 @@ Track.prototype.getAttrs = function(){
         id: self.id,
         artist: res.artist,
         title: res.title,
-        multiplier_strength: parseInt(res.multiplier_strength),
-        multiplier_start: parseInt(res.multiplier_start)
+        stars: 3
       };
       deferred.resolve(attributes);
     }
