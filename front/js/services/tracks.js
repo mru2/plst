@@ -1,6 +1,8 @@
 
 angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns, ServerDate){
 
+  $rootScope.appLoaded = false;  
+
   // Track model
   function Track(opts) {
     this.id = opts.id;

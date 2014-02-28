@@ -2,6 +2,8 @@
 
 angular.module('app').factory('ServerDate', function($socket, $rootScope){
 
+  $rootScope.synced = false;
+
   var offset = 0;
 
   var times=[];
