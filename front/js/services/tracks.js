@@ -67,7 +67,9 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
 
   // Initialize the tracks content, when synced
-  $socket.emit('bootstrap', User.id);
+  $socket.on('connect', function(){
+    $socket.emit('bootstrap', User.id);
+  });
 
   return _tracks;
 
