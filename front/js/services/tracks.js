@@ -1,5 +1,5 @@
 
-angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns){
+angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns, ServerDate){
 
   // Track model
   function Track(opts) {
@@ -29,7 +29,7 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
   // Multiplier checking
   Track.prototype.has_multiplier = function() {
-    return (Date.now() < (this.multiplier_start + 15000));
+    return (ServerDate.now() < (this.multiplier_start + 15000));
   };
 
 

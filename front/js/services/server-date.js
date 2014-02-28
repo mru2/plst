@@ -14,7 +14,8 @@ angular.module('app').factory('ServerDate', function($socket){
   $socket.on('pingback', function(t2){
     times[2] = t2;
     times[3] = Date.now();
-    offset = ((times[1]-times[0]) + (times[2]-times[3])) / 2;
+
+    offset = ((times[3] - times[0]) - (times[2] - times[1])) / 2;
   });
 
 
