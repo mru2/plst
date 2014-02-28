@@ -1,6 +1,6 @@
 // Synchronize the clock with the server time. Cf NTP protocol
 
-angular.module('app').factory('ServerDate', function($socket){
+angular.module('app').factory('ServerDate', function($socket, $rootScope){
 
   var offset = 0;
 
@@ -16,6 +16,7 @@ angular.module('app').factory('ServerDate', function($socket){
     times[3] = Date.now();
 
     offset = ((times[3] - times[0]) - (times[2] - times[1])) / 2;
+    $rootScope.synced = true;
   });
 
 
