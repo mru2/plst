@@ -1,5 +1,5 @@
 
-angular.module('app').factory('cooldowns', function($socket, ServerDate){
+angular.module('app').factory('cooldowns', function($socket){
 
   function Cooldown(opts){
     this.iconCode = opts.iconCode;
@@ -16,7 +16,7 @@ angular.module('app').factory('cooldowns', function($socket, ServerDate){
     track = track || this.track;
 
     // Check if ok
-    if( ServerDate.now() < this.lastClick + this.duration ){
+    if( Date.now() < this.lastClick + this.duration ){
       return;
     }
     else {
@@ -26,14 +26,14 @@ angular.module('app').factory('cooldowns', function($socket, ServerDate){
       // Update the track (todo in services also ...)
       $socket.emit(this.action, {trackId: track.id}, function(){
         cooldown.loading = false;
-        cooldown.lastClick = ServerDate.now();
+        cooldown.lastClick = Date.now();
       });
     }
 
   }
 
   Cooldown.prototype.completion = function(){
-    var delta = ServerDate.now() - this.lastClick;
+    var delta = Date.now() - this.lastClick;
 
     if (delta >= this.duration){
       return 1;
@@ -44,7 +44,7 @@ angular.module('app').factory('cooldowns', function($socket, ServerDate){
   }
 
 
-  var lastClick = ServerDate.now() - 50000;
+  var lastClick = Date.now() - 50000;
 
   return {
     upvote: function(track){
