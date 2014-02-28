@@ -9,6 +9,7 @@ var baseKey = 'plst'
 var Track = function(id){
   this.id = id;
   this.key = baseKey + ':' + 'track' + ':' + id;
+  this.starsKey = this.key + ':stars';
 };
 
 Track.playlistKey = baseKey + ':' + 'tracks';
@@ -24,14 +25,17 @@ Track.prototype.getAttrs = function(){
       deferred.reject(new Error(err));      
     }
     else {
-      // Format the track
-      var attributes = {
-        id: self.id,
-        artist: res.artist,
-        title: res.title,
-        stars: 3
-      };
-      deferred.resolve(attributes);
+      // Get the stars
+      self.getStarsCount().then(function(starsCount){
+        // Format the track
+        var attributes = {
+          id: self.id,
+          artist: res.artist,
+          title: res.title,
+          stars: starsCount
+        };
+        deferred.resolve(attributes);
+      });
     }
   });
 
@@ -71,33 +75,66 @@ Track.prototype.setAttr = function(name, value){
   return deferred.promise;
 };
 
-
-// Get the current multiplier
-Track.prototype.getMultiplier = function(){
-  var multiplierDuration = 10000;
-
-  return this.getAttrs()
-  .then(function(attrs){
-    if (!!attrs.multiplier_start && !!parseInt(attrs.multiplier_strength) && (Date.now() < ( parseInt(attrs.multiplier_start) + multiplierDuration ))) {
-      return parseInt(attrs.multiplier_strength);
-    }
-    else {
-      return 1;
-    }
-  });
-};
-
-
 // Upvote a track (checking its active multiplier)
 Track.prototype.upvote = function(){
   var self = this;
 
-  return this.getMultiplier()
-  .then(function(multiplier){
-    return self.pushScore(multiplier);
+  return this.getStarsCount()
+  .then(function(starsCount){
+    return self.pushScore(starsCount + 1);
   });
 
 };
+
+// Get the current stars count
+Track.prototype.getStarsCount = function(){
+  var deferred = Q.defer();
+  redis.scard(this.starsKey, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else{
+      // Return the stars count + 1
+      deferred.resolve(parseInt(res));
+    }
+  });
+
+  return deferred.promise;
+};
+
+// Add a star
+Track.prototype.star = function(userId){
+  console.log('adding', userId, 'to stars of', this.id)
+  var deferred = Q.defer();
+  redis.sadd(this.starsKey, userId, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else{
+      deferred.resolve(res);
+    }
+  });
+
+  return deferred.promise;
+};
+
+
+// Remove a star
+Track.prototype.unstar = function(userId){
+  console.log('removing', userId, 'from stars of', this.id)
+  var deferred = Q.defer();
+  redis.srem(this.starsKey, userId, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else{
+      deferred.resolve(res);
+    }
+  });
+
+  return deferred.promise;
+};
+
 
 
 // Get the top tracks
@@ -126,7 +163,40 @@ Track.getPlaylist = function(){
   return deferred.promise;
 };
 
+var getCurrentStar = function(userId){
+  console.log('getting current star for', userId);
+  var deferred = Q.defer();
 
+  redis.get((baseKey + ':' + 'currentStar' + ':' + userId), function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else {
+      if(!!res){
+        deferred.resolve(res);
+      }
+      else {
+        deferred.resolve(null);
+      }
+    }
+  });
+  
+  return deferred.promise;
+};
+
+var setCurrentStar = function(userId, trackId) {
+  var deferred = Q.defer();
+
+  redis.set((baseKey + ':' + 'currentStar' + ':' + userId), trackId, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else {
+      deferred.resolve(true);
+    }
+  });
+  return deferred.promise;
+};
 
 
 module.exports = {
@@ -145,27 +215,65 @@ module.exports = {
     return track.upvote();
   },
 
-  multiply: function(id){
-    var track = new Track(id);
+  star: function(userId, trackId){
+    return getCurrentStar(userId)
+    .then(function(formerStarId){
+      var out = [];
 
-    var strength, start;
+      // Push the former in the updates if any
+      if (!!formerStarId) {
+        var formerStar = new Track(formerStarId);
+        out.push(
+          formerStar
+          .unstar(userId)
+          .then(function(){
+            return formerStar.getAttrs()
+          })
+        );
+      }
 
-    return track.getMultiplier()
-    .then(function(multiplier){
-      strength = multiplier + 1;
-      track.setAttr('multiplier_strength', strength);
-    })
-    .then(function(){
-      start = Date.now();
-      track.setAttr('multiplier_start', start);
-    })
-    .then(function(){
-      return {
-        strength: strength,
-        start: start
-      };
+      // Anyway, push the new star
+      var newStar = new Track(trackId);
+      out.push(
+        newStar
+        .star(userId)
+        .then(function(){
+          return setCurrentStar(userId, trackId);
+        })
+        .then(function(){
+          return newStar.getAttrs();
+        })
+      );
+
+      return Q.all(out);
     });
   },
+
+  currentStar: function(userId){
+    return getCurrentStar(userId);
+  },
+
+  // multiply: function(id){
+  //   var track = new Track(id);
+
+  //   var strength, start;
+
+  //   return track.getMultiplier()
+  //   .then(function(multiplier){
+  //     strength = multiplier + 1;
+  //     track.setAttr('multiplier_strength', strength);
+  //   })
+  //   .then(function(){
+  //     start = Date.now();
+  //     track.setAttr('multiplier_start', start);
+  //   })
+  //   .then(function(){
+  //     return {
+  //       strength: strength,
+  //       start: start
+  //     };
+  //   });
+  // },
 
   all: function(){
     return Track.getPlaylist()

@@ -34,7 +34,7 @@ io.sockets.on('connection', function (socket) {
   socket.emit('connected');
 
   // Bootstrap data
-  socket.on('bootstrap', function(){
+  socket.on('bootstrap', function(userId){
     console.log('SOCKET : boostraping');
 
     db.all().then(function(playlist){
@@ -43,6 +43,11 @@ io.sockets.on('connection', function (socket) {
       socket.emit('bootstrap', playlist);
 
     }).done();
+
+    db.currentStar(userId).then(function(currentStar){
+      socket.emit('currentStar', currentStar);
+    }).done();
+
   });
 
   // Upvote
@@ -52,6 +57,20 @@ io.sockets.on('connection', function (socket) {
     db.upvote(data.trackId).then(function(newScore){
 
       io.sockets.emit('push', {trackId: data.trackId, score: newScore});
+      cb(true);
+
+    }).done();
+  });
+
+  // Star
+  socket.on('star', function(data, cb){
+    console.log('SOCKET : received star with', data);
+
+    db.star(data.userId, data.trackId).then(function(updatedTracks){
+
+      console.log('SOCKET : sending update with', updatedTracks);
+
+      io.sockets.emit('update', updatedTracks)
       cb(true);
 
     }).done();

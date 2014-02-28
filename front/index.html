@@ -20,6 +20,7 @@
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-animate.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-cookies.js"></script>
     <script type="text/javascript" src="/js/vendor/animationframe.js"></script>
     <script type="text/javascript">
       AnimationFrame.shim();
@@ -35,6 +36,7 @@
     <script type="text/javascript" src="/js/services/socket.js"></script>
     <script type="text/javascript" src="/js/services/cooldowns.js"></script>
     <script type="text/javascript" src="/js/services/tracks.js"></script>
+    <script type="text/javascript" src="/js/services/user.js"></script>
 
     <script type="text/javascript" src="/js/directives/cooldown.js"></script>
 
@@ -135,8 +137,8 @@
             <div class="back">
               <div class="cooldowns">
 
-                <div class="star" ng-class="(currentStar === track) ? 'active' : ''" ng-click="doStar(track)">
-                  <i class="fa" ng-class="(currentStar === track) ? 'fa-star' : 'fa-star-o'"></i>
+                <div class="star" ng-class="isStar(track) ? 'active' : ''" ng-click="doStar(track)">
+                  <i class="fa" ng-class="isStar(track) ? 'fa-star' : 'fa-star-o'"></i>
                 </div>
 
               </div>
@@ -146,8 +148,10 @@
 
               <div class="small-3 columns score">
                 <span>{{ track.score }}</span>
-                <div class="stars" ng-show="track.stars > 0">
-                  <i class="fa fa-star"></i> × {{track.stars}}
+                <div class="stars">
+                  <div ng-show="track.stars > 0">
+                    <i class="fa fa-star"></i> × {{track.stars}}
+                  </div>
                 </div>
               </div>
 

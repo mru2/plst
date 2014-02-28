@@ -1,5 +1,5 @@
 
-angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns){
+angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns, User){
 
   $rootScope.appLoaded = false;  
 
@@ -53,9 +53,21 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     track.bump(data.score - track.score);
   });
 
+  // Handling updates
+  $socket.on('update', function(data){
+    _.each(data, function(track){
+
+      if (!!_tracks[track.id]) {
+        // Only stars could change...
+        _tracks[track.id].stars = track.stars;
+      }
+
+    });
+  });
+
 
   // Initialize the tracks content, when synced
-  $socket.emit('bootstrap');
+  $socket.emit('bootstrap', User.id);
 
   return _tracks;
 
