@@ -24,7 +24,9 @@ console.log('Sockets listening on port : ' + socketPort);
 // Static files middleware
 app.use(express.static(__dirname + '/front'));
 
-
+app.get('/pop', function(req, res){
+  res.send(123456);
+});
 
 
 // Socket handlers

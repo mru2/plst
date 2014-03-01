@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+
+</head>
+<body>
+
+<div class="row">
+<br/>
+<p style="font-size: 3em;">Pour choisir la musique ca se passe sur <strong>http://bit.ly/playlistcoloc</strong></p>
+<br/>
+</div>
+
+<div id="dz-root"></div>
+
+<br/>
+<br/>
+<br/>
+
+<div id="player" style="width:100%;" align="center"></div>
+
+
+<br/>
+
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
+
+<script>
+
+  window.pageLoaded = true;
+
+  function reload(){
+    console.log('trying to reload, page is', pageLoaded);
+    if(pageLoaded == true){
+      console.log('page was true, ignoring');
+      return;
+    }
+    else{
+      pageLoaded = true;      
+      setTimeout(function(){
+        console.log('calling pop, page is ', pageLoaded);
+        $.getJSON('/pop', function(trackId){
+          pageLoaded = false;
+          DZ.player.playTracks([trackId]);
+        });
+      }, 1);
+    }
+  }
+
+  function onPlayerLoaded() {
+
+    DZ.Event.subscribe('player_position', function(pos){
+
+      // Track has begun
+      if(pos[0] > 0 && pageLoaded == false){
+        console.log('page loaded : ', pos);
+        pageLoaded = true;
+      }
+
+      // First is beginning, second is the end
+      if(pos[0] == 0 && pageLoaded == true){
+        console.log('reloading : ', pos);
+        pageLoaded = false;
+        reload(); // Sync global variable
+      }
+    });
+
+
+    $.getJSON('/api/pop', function(trackId){
+      DZ.player.playTracks([trackId]);
+    });
+  }
+
+  DZ.init({
+    appId  : '133181',
+    channelUrl : 'http://playlist.mru2.com/channel.html',
+    player : {
+      container : 'player',
+      cover : true,
+      width : 1000,
+      height : 80,
+      playlist: false,
+      onload : onPlayerLoaded
+    }
+  });
+
+  DZ.login(function(response) {
+    if (response.authResponse) {
+      console.log('Welcome!  Fetching your information.... ');
+      DZ.api('/user/me', function(response) {
+        console.log('Good to see you, ' + response.name + '.');
+      });
+    } else {
+      console.log('User cancelled login or did not fully authorize.');
+    }
+  }, {perms: 'manage_library,delete_library'});
+
+
+</script>
+
+</body>
+</html>
