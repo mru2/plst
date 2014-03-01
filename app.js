@@ -25,7 +25,10 @@ console.log('Sockets listening on port : ' + socketPort);
 app.use(express.static(__dirname + '/front'));
 
 app.get('/pop', function(req, res){
-  res.send(123456);
+  db.popTopTrack().then(function(topTrackId){
+    io.sockets.emit('removeTrack', topTrackId);
+    res.send(topTrackId);
+  }).done();
 });
 
 

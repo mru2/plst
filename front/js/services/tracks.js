@@ -47,6 +47,11 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     }
   });
 
+  // Monitor removed tracks
+  $socket.on('removeTrack', function(trackId){
+    delete _tracks[trackId];
+  });
+
   // Handling upvotes
   $socket.on('push', function(data){
     var track = _tracks[data.trackId];

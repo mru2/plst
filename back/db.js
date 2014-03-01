@@ -121,7 +121,6 @@ Track.prototype.star = function(userId){
 
 // Remove a star
 Track.prototype.unstar = function(userId){
-  console.log('removing', userId, 'from stars of', this.id)
   var deferred = Q.defer();
   redis.srem(this.starsKey, userId, function(err, res){
     if(err){
@@ -132,6 +131,36 @@ Track.prototype.unstar = function(userId){
     }
   });
 
+  return deferred.promise;
+};
+
+// Delete a track
+Track.prototype.remove = function(){
+  console.log('deleting track', this.id);
+  var deferred = Q.defer();
+  var track = this;
+  redis.zrem(Track.playlistKey, this.id, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else {
+      redis.del(track.starsKey, function(err, res){
+        if(err){
+          deferred.reject(new Error(err));
+        }
+        else {
+          redis.del(track.key, function(err, res){
+            if(err){
+              deferred.reject(new Error(err));
+            }
+            else {
+              deferred.resolve(true);
+            }
+          });
+        }
+      });
+    }
+  });
   return deferred.promise;
 };
 
@@ -157,6 +186,24 @@ Track.getPlaylist = function(){
       }
 
       deferred.resolve(formattedRes);
+    }
+  });
+
+  return deferred.promise;
+};
+
+
+// Get the top track
+Track.getTop = function(){
+  var deferred = Q.defer();
+
+  redis.zrevrangebyscore(Track.playlistKey, '+inf', 0, 'limit', 0, 1, function(err, res){
+    if(err){
+      deferred.reject(new Error(err));
+    }
+    else{
+      console.log('getTop : got ', res);
+      deferred.resolve(res[0]);
     }
   });
 
@@ -275,6 +322,18 @@ module.exports = {
   //   });
   // },
 
+  popTopTrack: function(){
+    return Track.getTop()
+    .then(function(trackId){
+      console.log('got top track', trackId);
+      var track = new Track(trackId);
+      return track.remove()
+      .then(function(){
+        return trackId;
+      });
+    });
+  },
+
   all: function(){
     return Track.getPlaylist()
     .then(function(playlist){
@@ -290,6 +349,5 @@ module.exports = {
       return Q.all(playlistWithDetails);
 
     });
-
   }
 };
