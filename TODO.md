@@ -1,12 +1,22 @@
-- new multiplier/spotlight
-- player integration
+NAME!!
 
+Front
+ - help
+ - room creation
 
-[...]
-- help
-- packaging
-- back button
-- render bug when loading
+App
+ - (redesign : ionic?)
+ - back button
+ - onmousedown
+ - render when loading
+ - currently playing
 
-[...]
-- on demand room
+Player page
+ - redesign
+
+Back 
+ - room creation
+ - multiple rooms
+
+Arch
+ - separate subdomains / apps

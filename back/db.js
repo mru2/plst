@@ -79,7 +79,8 @@ Track.prototype.setAttr = function(name, value){
 Track.prototype.upvote = function(){
   var self = this;
 
-  return this.getStarsCount()
+  return this.getAttrs()
+  .then(function(){ return self.getStarsCount(); })
   .then(function(starsCount){
     return self.pushScore(starsCount + 1);
   });
