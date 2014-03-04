@@ -2,7 +2,7 @@
 // Playlist controller
 // ===================
 
-angular.module('app').controller('PlaylistCtrl', function($scope, cooldowns, tracks, User, $socket) {
+angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, cooldowns, tracks, User, $socket) {
 
   $scope.hiddenCooldowns = [cooldowns.multiply, cooldowns.spotlight];
 
@@ -45,7 +45,23 @@ angular.module('app').controller('PlaylistCtrl', function($scope, cooldowns, tra
 
   // Watch the playlist changes
   $scope.$watchCollection('tracks', function(){
-    $scope.playlist = _.values(tracks);
+
+    // Gradual entering
+    var playlist = _.sortBy(_.values(tracks), function(track){
+      return -1 * track.score;
+    });
+
+    var newTrack;
+    $scope.playlist = [];
+    var gradualAppend = function(){
+      newTrack = playlist.shift();
+      if (!!newTrack) {
+        $scope.playlist.push(newTrack);
+        $timeout(gradualAppend, 100);
+      }
+    }
+
+    gradualAppend();
   });
 
   // Bootstrap the current star
