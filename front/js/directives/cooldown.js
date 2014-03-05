@@ -6,27 +6,9 @@ angular.module('app').directive('cooldown', function(){
     // Default scope
     scope.class = "";
 
-    scope.openingStyle = {
-      'width': config.size + 'px',
-      'height': config.size + 'px',
-      'border-width': (config.size/10),
-      'border-color': scope.cooldown.color
-    };
-
-    scope.circleStyle = {
-      'width': (config.size * 0.9) + 'px',
-      'height': (config.size * 0.9) + 'px',
-      'margin-left': '-' + (config.size * 0.9/2) + 'px',
-      'margin-top': '-' + (config.size * 0.9/2) + 'px',
-      'background-color': scope.cooldown.color
-    };
-
-    scope.iconStyle = {
-      'font-size': (config.size*0.5)+ 'px',
-      'width': (config.size*0.9) + 'px',
-      'height': (config.size*0.9) + 'px',
-      'line-height': (config.size*0.9) + 2 + 'px'
-    };
+    scope.openingStyle = {};
+    scope.circleStyle = {};
+    scope.iconStyle = {};
 
     scope.iconChar = String.fromCharCode(scope.cooldown.iconCode);
 
@@ -48,7 +30,9 @@ angular.module('app').directive('cooldown', function(){
 
       // Handle loading state
       if (scope.cooldown.loading) {
-        scope.class = 'complete loading';
+        scope.$apply(function(){
+          scope.class = 'complete loading';
+        });
         drawing = false;
       }
 

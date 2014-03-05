@@ -132,6 +132,9 @@ li .button {
 }
 
 /* Title bar */
+.title{
+  position: fixed;
+}
 
 .main-title{
   margin-top: 1em;
@@ -246,7 +249,7 @@ li .button {
 }
 
 .track .toggle-switch cooldown{
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 
