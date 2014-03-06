@@ -48,22 +48,9 @@
   <body>
     <div id="dz-root"></div>
 
-    <div ng-hide="appLoaded">
-      <div id="loading">
-        <div class="spinner">
-          <span class="bar"></span>
-          <span class="bar"></span>
-          <span class="bar"></span>
-        </div>
-
-        <p>Loading...</p>
-      </div>
-    </div>
-
-    <div ng-cloak ng-show="appLoaded">
-
-      <!-- Header -->
-      <div class="title">
+    <!-- Header -->
+    <div class="topbar">
+      <div class="row">
         <h2 class="main-title">
           <span class="dot dot1">.</span>
           <span class="dot dot2">.</span>
@@ -73,100 +60,113 @@
           <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
         </h2>
       </div>
+    </div>
 
+    <div class="main-container">
 
-      <!-- Search -->
-      <div ng-controller="SearchCtrl" ng-show="isSearch">
-
-        <div class="row collapse search" id="search">
-          <div class="small-9 columns">
-            <input id="search" type="search" placeholder="Ajouter un morceau" ng-model="query"/>
-          </div>
-          <div class="small-3 columns">
-            <input type="submit" value="Go" class="button postfix" ng-click="doSearch()"/>
-          </div>
-        </div>
-
-        <div class="row" ng-show="firstView">
-          <p>Recherchez un artiste ou un titre, puis appuyez sur <i class="fa fa-plus-circle"></i> pour le rajouter à la playlist en cours.</p>
-        </div>
-
-        <div class="row searching" ng-show="searching">
+      <div ng-hide="appLoaded">
+        <div id="loading">
           <div class="spinner">
             <span class="bar"></span>
             <span class="bar"></span>
             <span class="bar"></span>
           </div>
+
+          <p>Loading...</p>
+        </div>
+      </div>
+
+      <div ng-cloak ng-show="appLoaded">
+
+        <!-- Search -->
+        <div ng-controller="SearchCtrl" ng-show="isSearch">
+
+          <div class="row collapse search" id="search">
+            <div class="small-9 columns">
+              <input id="search" type="search" placeholder="Ajouter un morceau" ng-model="query"/>
+            </div>
+            <div class="small-3 columns">
+              <input type="submit" value="Go" class="button postfix" ng-click="doSearch()"/>
+            </div>
+          </div>
+
+          <div class="row" ng-show="firstView">
+            <p>Recherchez un artiste ou un titre, puis appuyez sur <i class="fa fa-plus-circle"></i> pour le rajouter à la playlist en cours.</p>
+          </div>
+
+          <div class="row searching" ng-show="searching">
+            <div class="spinner">
+              <span class="bar"></span>
+              <span class="bar"></span>
+              <span class="bar"></span>
+            </div>
+          </div>
+
+          <ul class="search-results row" ng-hide="searching">
+            <li ng-repeat="track in results" class="track">
+              <div class="front row">
+
+                <div class="small-3 columns add">
+                  <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
+                  <i class="fa fa-spinner fa-spin" ng-show="track.status === 'adding'"></i>
+                  <i class="fa fa-check track-added" ng-show="track.status === 'added'"></i>
+                </div>
+
+                <div class="small-9 columns track-details">
+                  <strong>{{ track.title }}</strong>
+                  <em>{{ track.artist.name }}</em>
+                </div>
+
+              </div>
+            </li>
+          </ul>
+
         </div>
 
-        <ul class="search-results row" ng-hide="searching">
-          <li ng-repeat="track in results" class="track">
-            <div class="front row">
 
-              <div class="small-3 columns add">
-                <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
-                <i class="fa fa-spinner fa-spin" ng-show="track.status === 'adding'"></i>
-                <i class="fa fa-check track-added" ng-show="track.status === 'added'"></i>
+        <!-- Playlist -->
+        <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
+
+          <div ng-show="playlist.length === 0">
+            <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
+          </div>
+
+          <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''">
+
+              <div class="toggle-switch">
+                <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
               </div>
 
-              <div class="small-9 columns track-details">
-                <em>{{ track.artist.name }}</em>
-                <strong>{{ track.title }}</strong>
+              <div class="back">
+                <div class="cooldowns">
+
+                  <div class="star" ng-class="isStar(track) ? 'active' : ''" ng-click="doStar(track)">
+                    <i class="fa" ng-class="isStar(track) ? 'fa-star' : 'fa-star-o'"></i>
+                  </div>
+
+                </div>
               </div>
+
+              <div class="front row"  ng-click="toggleSlide(track)">
+                <div class="score">
+                  <span>{{ track.score }}</span>                 
+                  <div ng-show="track.stars > 0" class="stars">
+                    <i class="fa fa-star"></i> × {{track.stars}}
+                  </div>
+                </div>
+
+                <div class="track-details">
+                  <strong>{{ track.title }}</strong>
+                  <em>{{ track.artist }}</em>
+                </div>
+              </div>
+
 
             </div>
           </li>
         </ul>
 
       </div>
-
-
-      <!-- Playlist -->
-      <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
-
-        <div ng-show="playlist.length === 0">
-          <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
-        </div>
-
-        <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''">
-
-            <div class="toggle-switch">
-              <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
-            </div>
-
-            <div class="back">
-              <div class="cooldowns">
-
-                <div class="star" ng-class="isStar(track) ? 'active' : ''" ng-click="doStar(track)">
-                  <i class="fa" ng-class="isStar(track) ? 'fa-star' : 'fa-star-o'"></i>
-                </div>
-
-              </div>
-            </div>
-
-            <div class="front row"  ng-click="toggleSlide(track)">
-
-              <div class="small-3 columns score">
-                <span>{{ track.score }}</span>
-                <div class="stars">
-                  <div ng-show="track.stars > 0">
-                    <i class="fa fa-star"></i> × {{track.stars}}
-                  </div>
-                </div>
-              </div>
-
-              <div class="small-9 columns track-details">
-                <em>{{ track.artist }}</em>
-                <strong>{{ track.title }}</strong>
-              </div>
-
-            </div>
-
-
-          </div>
-        </li>
-      </ul>
-
     </div>
 
   </body>
