@@ -8,7 +8,7 @@ angular.module('app').controller('SearchCtrl', function($scope, $socket) {
   $scope.searching = false;
   $scope.firstView = true;
 
-  $scope.doSearch = function(){
+  $scope.doSearch = function(){    
     if ($scope.query == '') {
       return;
     }
@@ -20,6 +20,7 @@ angular.module('app').controller('SearchCtrl', function($scope, $socket) {
       $scope.$apply(function(){
         $scope.searching = false;
         $scope.results = res.data;
+        console.log('results are', res.data);
       });
     });
   };

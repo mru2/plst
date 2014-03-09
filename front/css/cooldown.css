@@ -15,7 +15,7 @@ cooldown div.opening{
   width: 40px;
   height: 40px;
   border-width: 4px;
-  border-color: #39CCCC;
+  border-color: #724bc5;
 }
 
 cooldown div.opening div.circle{
@@ -27,8 +27,8 @@ cooldown div.opening div.circle{
   height: 24px;
   margin-left: -12px;
   margin-top: -12px;
-  background-color: #39CCCC;
-  border: 4px solid #39CCCC;
+  background-color: #724bc5;
+  border: 4px solid #724bc5;
 
   backface-visibility: visible;
   -webkit-backface-visibility: visible;
@@ -62,16 +62,16 @@ cooldown .kudo.complete a.kudobject div.opening div.circle i{
 cooldown .kudo.loading .opening{
   border-left: 4px solid rgba(0,0,0,0);
   border-right: 4px solid rgba(0,0,0,0);
-  border-top: 4px solid rgba(57, 204, 204, 1);
-  border-bottom: 4px solid rgba(57, 204, 204, 1);
+  border-top: 4px solid #724bc5;
+  border-bottom: 4px solid #724bc5;
   -webkit-animation: spin 1000ms infinite linear;
 }
 
 cooldown .kudo.loading .circle{
   border-left: 4px solid rgba(0,0,0,0);
   border-right: 4px solid rgba(0,0,0,0);
-  border-top: 4px solid rgba(57, 204, 204, 1);
-  border-bottom: 4px solid rgba(57, 204, 204, 1);
+  border-top: 4px solid #724bc5;
+  border-bottom: 4px solid #724bc5;
   -webkit-animation: spin_inv 400ms infinite linear;
   background-color: #222;
 }

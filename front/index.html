@@ -82,12 +82,10 @@
         <div ng-controller="SearchCtrl" ng-show="isSearch">
 
           <div class="row collapse search" id="search">
-            <div class="small-9 columns">
-              <input id="search" type="search" placeholder="Ajouter un morceau" ng-model="query"/>
-            </div>
-            <div class="small-3 columns">
-              <input type="submit" value="Go" class="button postfix" ng-click="doSearch()"/>
-            </div>
+            <form ng-submit="doSearch()">
+              <input type="search" placeholder="Ajouter un morceau" ng-model="query"></input>
+              <input type="submit" style="display:none;"></input>
+            </form>
           </div>
 
           <div class="row" ng-show="firstView">
@@ -137,22 +135,9 @@
                 <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
               </div>
 
-              <div class="back">
-                <div class="cooldowns">
-
-                  <div class="star" ng-class="isStar(track) ? 'active' : ''" ng-click="doStar(track)">
-                    <i class="fa" ng-class="isStar(track) ? 'fa-star' : 'fa-star-o'"></i>
-                  </div>
-
-                </div>
-              </div>
-
-              <div class="front row"  ng-click="toggleSlide(track)">
+              <div class="front row">
                 <div class="score">
                   <span>{{ track.score }}</span>                 
-                  <div ng-show="track.stars > 0" class="stars">
-                    <i class="fa fa-star"></i> × {{track.stars}}
-                  </div>
                 </div>
 
                 <div class="track-details">
