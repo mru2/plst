@@ -2,7 +2,7 @@
 // Search controller
 // =================
 
-angular.module('app').controller('SearchCtrl', function($scope, $socket) {
+angular.module('app').controller('SearchCtrl', function($scope, $socket, $timeout) {
 
   $scope.query = '';
   $scope.searching = false;
@@ -16,12 +16,24 @@ angular.module('app').controller('SearchCtrl', function($scope, $socket) {
     $scope.firstView = false;
     $scope.searching = true;
 
+    $scope.results = [];
     DZ.api('/search', 'GET', {q: $scope.query, order: 'RANKING'}, function(res){
-      $scope.$apply(function(){
-        $scope.searching = false;
-        $scope.results = res.data;
-        console.log('results are', res.data);
-      });
+      $scope.searching = false;
+
+      var results = res.data.slice(0,10);
+
+      var result;
+      var gradualAppend = function(){
+        result = results.shift();
+        if (!!result) {
+          $scope.results.push(result);
+          $timeout(gradualAppend, 100);
+        }
+      }
+
+      gradualAppend();
+
+      console.log('results are', res.data);
     });
   };
 

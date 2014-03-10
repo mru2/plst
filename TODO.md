@@ -21,6 +21,9 @@ App
  - currently playing
  - gradual entry
  - consistent ordering
+ - loader when reconnecting
+ - score less wide + responsive
+ - upvote pool
 
 
 Player page

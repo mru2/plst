@@ -70,9 +70,10 @@ body{
 /* Loader */
 #loading{
   text-align: center;
-  margin-top: 30%;
+  margin-top: 50%;
 }
 #loading p{
+  margin-top: 1em;
   font-size: 12px;
 }
 
@@ -160,6 +161,9 @@ li em {
   color: #555;
   text-align: right;
   vertical-align: bottom;
+  width: 64px;
+  position: absolute;
+  height: 71px;
 }
 
 .search-results .add i {
@@ -186,7 +190,12 @@ li em {
 }
 
 .searching{
-  margin-top: 30px;
+  text-align: center;
+  margin-top: 30%;
+}
+
+.search-help{
+  margin-top: 1em;
 }
 
 
@@ -356,51 +365,30 @@ li em {
 }
 
 
-
 /* Spinner */
 .spinner{
-  display: block;
-  height: 50px;
-  width: 50px;
-  font-size: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;  
+  border-left: 4px solid rgba(0,0,0,0);
+  border-right: 4px solid rgba(0,0,0,0);
+  border-top: 4px solid #724bc5;
+  border-bottom: 4px solid #724bc5;
+  -webkit-animation: spin 1000ms infinite linear;
   position: relative;
-  left: 50%;
-  margin-left: -25px;
-}
-.spinner span.bar{
   display: inline-block;
-  background-color: white;
-  height: 50px;
-  width: 12px;
+}
+
+.spinner .inner{
+  border-left: 4px solid rgba(0,0,0,0);
+  border-right: 4px solid rgba(0,0,0,0);
+  border-top: 4px solid #724bc5;
+  border-bottom: 4px solid #724bc5;
+  -webkit-animation: spin_inv 400ms infinite linear;
+  border-radius: 100%;  
+  width: 24px;
+  height: 24px;
   position: absolute;
-  bottom: 0;
+  top: 4px;
+  left: 4px;
 }
-
-.spinner span.bar:nth-child(1){
-  left: 0px;
-  background-color: #FFDC00;
-  -webkit-animation: equalize 1000ms infinite linear;
-}
-.spinner span.bar:nth-child(2){
-  left: 19px;
-  background-color: #F012BE;
-  -webkit-animation: equalize 600ms infinite linear;
-}
-.spinner span.bar:nth-child(3){
-  left: 38px;
-  background-color: #39CCCC;
-  -webkit-animation: equalize 800ms infinite linear;
-}
-
-@-webkit-keyframes equalize{ 
-  0%{
-    height: 0px;
-  }
-  50%{
-    height: 50px;
-  }
-  100%{
-    height: 0px;
-  }
-}
-

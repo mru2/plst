@@ -66,10 +66,9 @@
 
       <div ng-hide="appLoaded">
         <div id="loading">
+
           <div class="spinner">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
+            <div class="inner"></div>
           </div>
 
           <p>Loading...</p>
@@ -89,14 +88,12 @@
           </div>
 
           <div class="row" ng-show="firstView">
-            <p>Recherchez un artiste ou un titre, puis appuyez sur <i class="fa fa-plus-circle"></i> pour le rajouter à la playlist en cours.</p>
+            <p class="search-help">Recherchez un artiste ou un titre, puis appuyez sur <i class="fa fa-plus-circle"></i> pour le rajouter à la playlist en cours.</p>
           </div>
 
           <div class="row searching" ng-show="searching">
             <div class="spinner">
-              <span class="bar"></span>
-              <span class="bar"></span>
-              <span class="bar"></span>
+              <div class="inner"></div>
             </div>
           </div>
 
@@ -104,13 +101,13 @@
             <li ng-repeat="track in results" class="track">
               <div class="front row">
 
-                <div class="small-3 columns add">
+                <div class="add">
                   <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
                   <i class="fa fa-spinner fa-spin" ng-show="track.status === 'adding'"></i>
                   <i class="fa fa-check track-added" ng-show="track.status === 'added'"></i>
                 </div>
 
-                <div class="small-9 columns track-details">
+                <div class="track-details">
                   <strong>{{ track.title }}</strong>
                   <em>{{ track.artist.name }}</em>
                 </div>
