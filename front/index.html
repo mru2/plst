@@ -34,14 +34,12 @@
     <script type="text/javascript" src="/js/main.js"></script>
 
     <script type="text/javascript" src="/js/services/socket.js"></script>
-    <script type="text/javascript" src="/js/services/cooldowns.js"></script>
     <script type="text/javascript" src="/js/services/tracks.js"></script>
     <script type="text/javascript" src="/js/services/user.js"></script>
 
-    <script type="text/javascript" src="/js/directives/cooldown.js"></script>
-
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
     <script type="text/javascript" src="/js/controllers/search.js"></script>
+    <script type="text/javascript" src="/js/controllers/topbar.js"></script>
 
   </head>
 
@@ -49,16 +47,20 @@
     <div id="dz-root"></div>
 
     <!-- Header -->
-    <div class="topbar">
+    <div class="topbar" ng-controller="TopbarCtrl">
       <div class="row">
         <h2 class="main-title">
-          <span class="dot dot1">.</span>
-          <span class="dot dot2">.</span>
-          <span class="dot dot3">.</span>
           plst
-          <i class="fa fa-search" ng-click="isSearch = true" ng-show="!isSearch"></i>
-          <i class="fa fa-bars" ng-click="isSearch = false" ng-show="isSearch"></i>
         </h2>
+
+        <span class="current-votes" ng-cloak>
+          <i class="fa fa-star"></i> x {{votes()}}
+        </span>
+
+        <div class="toggle-search">
+          <i class="fa fa-search" ng-click="toggleSearch()" ng-show="!isSearch"></i>
+          <i class="fa fa-bars" ng-click="toggleSearch()" ng-show="isSearch"></i>
+        </div>
       </div>
     </div>
 
@@ -126,10 +128,10 @@
             <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
           </div>
 
-          <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns" ng-class="(currentTrack === track) ? 'slide' : ''">
+          <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns">
 
               <div class="toggle-switch">
-                <cooldown cooldown="track.cooldown" ng-click="track.cooldown.use()" size="40"></cooldown>
+                <i class="fa fa-star" ng-click="track.upvote()"></i>
               </div>
 
               <div class="front row">

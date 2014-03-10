@@ -1,5 +1,5 @@
 
-angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, cooldowns, User){
+angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, User){
 
   $rootScope.appLoaded = false;  
 
@@ -9,8 +9,7 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     this.score = opts.score;
     this.artist = opts.artist;
     this.title = opts.title;
-    this.cooldown = cooldowns.upvote(this);
-    this.stars = opts.stars;
+    this.upvoting = false;
   };
 
   Track.prototype.bump = function(score) {
@@ -26,6 +25,23 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
 
     bumpOne();
   };
+
+  Track.prototype.upvote = function(){
+    // To handle ...
+    if (this.upvoting) {
+      return;
+    }
+
+    this.upvoting = true;
+
+    var self = this;
+
+    User.useVote();
+
+    $socket.emit('upvote', {trackId: this.id}, function(){
+      self.upvoting = false;
+    });
+  }
 
 
   // Current tracks, indexed by id

@@ -16,9 +16,16 @@ angular.module('app').factory('User', function($cookieStore){
     $cookieStore.put('uid', uid);
   }
 
+  var votes = 55;
+
   return {
     id: uid,
-    currentStarId: null
+    votes: function(){
+      return votes;
+    },
+    useVote: function(){
+      votes -= 1;
+    }
   };
 
 });
