@@ -12,15 +12,14 @@
 
     <link rel="stylesheet" type="text/css" href="/css/normalize.css">
     <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/cooldown.css">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
 
     <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-animate.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular-cookies.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-animate.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.14/angular-cookies.js"></script>
     <script type="text/javascript" src="/js/vendor/animationframe.js"></script>
     <script type="text/javascript">
       AnimationFrame.shim();
@@ -101,7 +100,7 @@
 
           <ul class="search-results row" ng-hide="searching">
             <li ng-repeat="track in results" class="track">
-              <div class="front row">
+              <div class="front row" ng-style="{top: $index*72 + 'px'}">
 
                 <div class="add">
                   <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
@@ -128,10 +127,14 @@
             <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
           </div>
 
-          <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns">
+          <li ng-repeat="track in playlist | orderBy:['score', 'id']:true" class="track small-12 columns" ng-style="{top: $index*72 + 'px'}">
 
-              <div class="toggle-switch">
-                <i class="fa fa-star" ng-click="track.upvote()"></i>
+              <div class="upvote" ng-class="track.upvoting ? 'loading' : 'done'">
+                <div class="outer" ng-mousedown="track.startUpvote()" ng-mouseup="track.stopUpvote()">
+                  <div class="inner">
+                    <i class="fa fa-star"></i>
+                  </div>
+                </div>
               </div>
 
               <div class="front row">

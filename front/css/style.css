@@ -204,7 +204,7 @@ li em {
 /* Sliding the cooldowns */
 .track{
   font-size: 1rem;
-  position: relative;
+  position: absolute;
   overflow: hidden;
   background: #444;
   height: 72px;
@@ -243,12 +243,12 @@ li em {
   top: 4px;
 }
 
-.track .toggle-switch{
+.track .upvote{
   height: 70px;
   position: absolute;
   right: 0px;
   top: 1px;
-  padding: 20px;
+  padding: 16px 20px;
   background-image: -webkit-gradient(linear, right top, left top, from(#222), to(rgba(34,34,34,0)), color-stop(.8,#222));;
   cursor: pointer;
   z-index: 3;
@@ -388,4 +388,93 @@ li em {
   position: absolute;
   top: 4px;
   left: 4px;
+}
+
+
+/*Track cooldowns*/
+.upvote .outer{
+  width: 40px;
+  height: 40px;
+  border-radius: 100%;  
+  border: 4px solid #724bc5;
+  position: relative;
+  display: inline-block;
+}
+
+.upvote .inner{
+  border: 4px solid #724bc5;
+  border-radius: 100%;  
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: #724bc5;
+}
+
+.upvote i{
+  line-height: 16px;
+  text-align: center;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  font-size: 14px;
+  color: #222;
+}
+
+.upvote.loading:not(.loading-add-active) .outer{
+  border-left: 4px solid rgba(0,0,0,0);
+  border-right: 4px solid rgba(0,0,0,0);
+  -webkit-animation: spin 1000ms infinite linear;
+}
+
+.upvote.loading:not(.loading-add-active) .inner{
+  border-top: 4px solid rgba(0,0,0,0);
+  border-bottom: 4px solid rgba(0,0,0,0);
+  -webkit-animation: spin_inv 400ms infinite linear;
+  background-color: #222;
+}
+
+.upvote.loading-add{
+  -webkit-transition: 240ms linear all;
+}
+
+.upvote.loading-add-active .inner{
+  -webkit-animation: fadeout 240ms ease-in; /*Easeout-sin*/
+}
+
+.upvote.loading-remove{
+  -webkit-transition: 1000ms linear all;
+}
+
+.upvote.loading-remove-active .inner{
+  -webkit-animation: bounce 500ms;
+}
+
+@-webkit-keyframes fadeout { 
+  from { 
+    -webkit-transform: scale(1);
+    opacity:1;
+  }
+  to { 
+    -webkit-transform: scale(0);
+    opacity:0;
+  }
+}
+
+@-webkit-keyframes bounce { 
+  0% {
+    -webkit-transform: scale(1);
+    opacity: 0;
+  }
+  50% {
+    -webkit-transform: scale(2.0);
+    opacity: .7;
+  }
+  60% {
+    -webkit-transform: scale(0.75);
+    opacity: 1;
+  }
+  80% { -webkit-transform: scale(1.2) }
+  100% { -webkit-transform: scale(1) }
 }

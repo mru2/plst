@@ -45,9 +45,12 @@ angular.module('app').controller('PlaylistCtrl', function($scope, $timeout, trac
   $scope.$watchCollection('tracks', function(){
 
     // Gradual entering
-    var playlist = _.sortBy(_.values(tracks), function(track){
-      return -1 * track.score;
+    var playlist = _.values(tracks).sort(function(t1, t2){
+      // Bool => 0 or 1. Lowest first in list
+      return 0.5 - (t1.score > t2.score || (t1.score === t2.score && t1.id > t2.id));
     });
+
+    console.log('playlist : ', _.values(playlist));
 
     var newTrack;
     $scope.playlist = [];

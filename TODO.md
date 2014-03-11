@@ -24,6 +24,7 @@ App
  - loader when reconnecting
  - score less wide + responsive
  - upvote pool
+ - all position:absolute (?)
 
 
 Player page
