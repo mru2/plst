@@ -12,7 +12,7 @@ angular.module('app').factory('$socket', function($rootScope){
     socket = io.connect('http://localhost:3457');
   }
   else {
-    socket = io.connect('http://' + location.hostname + ':3456');
+    socket = io.connect('http://' + location.hostname + ':8000');
   }
 
 
