@@ -11,6 +11,10 @@ var express       = require('express')
   , io            = require('socket.io').listen(socketServer)
   , db            = require('./back/db.js');
 
+io.configure(function(){
+    io.set("transports", ["websocket"]);
+});
+
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP;
 if (typeof ipaddress === "undefined") {
     //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -25,8 +29,8 @@ server.listen(appPort, ipaddress, function() {
     console.log('App listening on port : ' + appPort);
 });
 
-socketServer.listen(socketPort, ipaddress, function() {        
-    console.log('Sockets listening on port : ' + socketPort);
+socketServer.listen(appPort, ipaddress, function() {        
+    console.log('Sockets listening on port : ' + appPort);
 });
 
 // Static files middleware
