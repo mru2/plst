@@ -8,7 +8,7 @@ var express       = require('express')
   , app           = express()
   , server        = require('http').createServer(app)
   , socketServer  = require('http').createServer()
-  , io            = require('socket.io').listen(socketServer)
+  , io            = require('socket.io').listen(server)
   , db            = require('./back/db.js');
 
 io.configure(function(){
@@ -29,9 +29,9 @@ server.listen(appPort, ipaddress, function() {
     console.log('App listening on port : ' + appPort);
 });
 
-socketServer.listen(appPort, ipaddress, function() {        
-    console.log('Sockets listening on port : ' + appPort);
-});
+//socketServer.listen(appPort, ipaddress, function() {        
+//    console.log('Sockets listening on port : ' + appPort);
+//});
 
 // Static files middleware
 app.use(express.static(__dirname + '/front'));
