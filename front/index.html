@@ -100,7 +100,7 @@
 
           <ul class="search-results row" ng-hide="searching">
             <li ng-repeat="track in results" class="track">
-              <div class="front row" ng-style="{top: $index*72 + 'px'}">
+              <div class="front row">
 
                 <div class="add">
                   <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
@@ -127,7 +127,7 @@
             <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
           </div>
 
-          <li ng-repeat="track in playlist | orderBy:['score', 'id']:true" class="track small-12 columns" ng-style="{top: $index*72 + 'px'}">
+          <li ng-repeat="track in playlist | orderBy:['score', 'id']:true" class="track small-12 columns">
 
               <div class="upvote" ng-class="track.upvoting ? 'loading' : 'done'">
                 <div class="outer" ng-mousedown="track.startUpvote()" ng-mouseup="track.stopUpvote()">
@@ -139,7 +139,7 @@
 
               <div class="front row">
                 <div class="score">
-                  <span>{{ track.score }}</span>                 
+                  <strong>{{ track.score }}</strong>
                 </div>
 
                 <div class="track-details">

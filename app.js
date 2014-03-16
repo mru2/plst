@@ -59,10 +59,12 @@ io.sockets.on('connection', function (socket) {
   socket.on('upvote', function(data, cb){
     console.log('SOCKET : received upvote with', data);
 
-    db.upvote(data.trackId).then(function(newScore){
+    db.upvote(data.trackId, data.score).then(function(newScore){
 
-      io.sockets.emit('push', {trackId: data.trackId, score: newScore});
-      cb(true);
+      setTimeout(function(){
+        io.sockets.emit('push', {trackId: data.trackId, score: newScore});
+        cb(true);
+      }, 1000);
 
     }).done();
   });

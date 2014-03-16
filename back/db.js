@@ -76,13 +76,12 @@ Track.prototype.setAttr = function(name, value){
 };
 
 // Upvote a track (checking its active multiplier)
-Track.prototype.upvote = function(){
+Track.prototype.upvote = function(score){
   var self = this;
 
   return this.getAttrs()
-  .then(function(){ return self.getStarsCount(); })
-  .then(function(starsCount){
-    return self.pushScore(starsCount + 1);
+  .then(function(){
+    return self.pushScore(score);
   });
 
 };
@@ -258,9 +257,9 @@ module.exports = {
     .then(function(){ return track.getAttrs(); });
   },
 
-  upvote: function(id){
+  upvote: function(id, score){
     var track = new Track(id);
-    return track.upvote();
+    return track.upvote(score);
   },
 
   star: function(userId, trackId){

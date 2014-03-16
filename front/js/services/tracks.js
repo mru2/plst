@@ -10,6 +10,7 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     this.artist = opts.artist;
     this.title = opts.title;
     this.upvoting = false;
+    this.pendingVotes = 0;
   };
 
   Track.prototype.bump = function(score) {
@@ -26,22 +27,45 @@ angular.module('app').factory('tracks', function($rootScope, $socket, $timeout, 
     bumpOne();
   };
 
-  Track.prototype.upvote = function(){
-    // To handle ...
+  Track.prototype.startUpvote = function(){
     if (this.upvoting) {
       return;
     }
 
+    console.log('upvoting');
+    this.pendingVotes = this.pendingVotes || 0;
+    this.pendingVotes += 1;
+    User.useVote();
+
+    if (User.votes() == 0) 
+      this.stopUpvote();
+    else {
+      var timeoutDelay = (1 / (Math.log(this.pendingVotes) + 1)) * 400;
+      this.timeout = $timeout(_.bind(this.startUpvote, this), timeoutDelay);
+    }
+  };
+
+
+  Track.prototype.stopUpvote = function(){
+    console.log('upvote stopping');
+    $timeout.cancel(this.timeout);
+    if (this.pendingVotes > 0) {
+      this.upvote();
+    }
+  };
+
+
+  Track.prototype.upvote = function(){
     this.upvoting = true;
+    var score = this.pendingVotes;
+    this.pendingVotes = 0;
 
     var self = this;
 
-    User.useVote();
-
-    $socket.emit('upvote', {trackId: this.id}, function(){
+    $socket.emit('upvote', {trackId: this.id, score: score}, function(){
       self.upvoting = false;
     });
-  }
+  };
 
 
   // Current tracks, indexed by id
