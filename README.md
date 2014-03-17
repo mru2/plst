@@ -1,4 +1,4 @@
-plst
+plst [![Dependency Status](https://gemnasium.com/popox/plst.png)](https://gemnasium.com/popox/plst)
 ====
 
 Collaborative playlist for parties
