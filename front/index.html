@@ -33,8 +33,10 @@
     <script type="text/javascript" src="/js/main.js"></script>
 
     <script type="text/javascript" src="/js/services/socket.js"></script>
-    <script type="text/javascript" src="/js/services/tracks.js"></script>
+    <script type="text/javascript" src="/js/services/sync.js"></script>
+    <script type="text/javascript" src="/js/services/playlist.js"></script>
     <script type="text/javascript" src="/js/services/user.js"></script>
+    <script type="text/javascript" src="/js/services/room.js"></script>
 
     <script type="text/javascript" src="/js/controllers/playlist.js"></script>
     <script type="text/javascript" src="/js/controllers/search.js"></script>
@@ -130,7 +132,7 @@
           <li ng-repeat="track in playlist | orderBy:['score', 'id']:true" class="track small-12 columns">
 
               <div class="upvote" ng-class="track.upvoting ? 'loading' : 'done'">
-                <div class="outer" ng-mousedown="track.startUpvote()" ng-mouseup="track.stopUpvote()">
+                <div class="outer" ng-mousedown="track.startUpvote()">
                   <div class="inner">
                     <i class="fa fa-star"></i>
                   </div>
@@ -140,6 +142,7 @@
               <div class="front row">
                 <div class="score">
                   <strong>{{ track.score }}</strong>
+                  <span class="pending-votes" ng-show="track.pendingVotes > 0">+ {{track.pendingVotes}}</span>
                 </div>
 
                 <div class="track-details">

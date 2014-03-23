@@ -9,7 +9,6 @@ var baseKey = 'plst'
 var Track = function(id){
   this.id = id;
   this.key = baseKey + ':' + 'track' + ':' + id;
-  this.starsKey = this.key + ':stars';
 };
 
 Track.playlistKey = baseKey + ':' + 'tracks';
@@ -22,20 +21,15 @@ Track.prototype.getAttrs = function(){
   
   redis.hgetall(this.key, function(err, res){
     if (err) {
-      deferred.reject(new Error(err));      
+      deferred.reject(new Error(err));  
     }
     else {
-      // Get the stars
-      self.getStarsCount().then(function(starsCount){
-        // Format the track
-        var attributes = {
-          id: self.id,
-          artist: res.artist,
-          title: res.title,
-          stars: starsCount
-        };
-        deferred.resolve(attributes);
-      });
+      var attributes = {
+        id: self.id,
+        artist: res.artist,
+        title: res.title
+      };
+      deferred.resolve(attributes);
     }
   });
 
@@ -86,54 +80,6 @@ Track.prototype.upvote = function(score){
 
 };
 
-// Get the current stars count
-Track.prototype.getStarsCount = function(){
-  var deferred = Q.defer();
-  redis.scard(this.starsKey, function(err, res){
-    if(err){
-      deferred.reject(new Error(err));
-    }
-    else{
-      // Return the stars count + 1
-      deferred.resolve(parseInt(res));
-    }
-  });
-
-  return deferred.promise;
-};
-
-// Add a star
-Track.prototype.star = function(userId){
-  console.log('adding', userId, 'to stars of', this.id)
-  var deferred = Q.defer();
-  redis.sadd(this.starsKey, userId, function(err, res){
-    if(err){
-      deferred.reject(new Error(err));
-    }
-    else{
-      deferred.resolve(res);
-    }
-  });
-
-  return deferred.promise;
-};
-
-
-// Remove a star
-Track.prototype.unstar = function(userId){
-  var deferred = Q.defer();
-  redis.srem(this.starsKey, userId, function(err, res){
-    if(err){
-      deferred.reject(new Error(err));
-    }
-    else{
-      deferred.resolve(res);
-    }
-  });
-
-  return deferred.promise;
-};
-
 // Delete a track
 Track.prototype.remove = function(){
   console.log('deleting track', this.id);
@@ -144,19 +90,12 @@ Track.prototype.remove = function(){
       deferred.reject(new Error(err));
     }
     else {
-      redis.del(track.starsKey, function(err, res){
+      redis.del(track.key, function(err, res){
         if(err){
           deferred.reject(new Error(err));
         }
         else {
-          redis.del(track.key, function(err, res){
-            if(err){
-              deferred.reject(new Error(err));
-            }
-            else {
-              deferred.resolve(true);
-            }
-          });
+          deferred.resolve(true);
         }
       });
     }
@@ -210,41 +149,50 @@ Track.getTop = function(){
   return deferred.promise;
 };
 
-var getCurrentStar = function(userId){
-  console.log('getting current star for', userId);
+var getUserVotes = function(userId){
+  // If no votes, start at 10
   var deferred = Q.defer();
+  deferred.resolve(10);
+  return deferred.promise;
+};
 
-  redis.get((baseKey + ':' + 'currentStar' + ':' + userId), function(err, res){
-    if(err){
-      deferred.reject(new Error(err));
-    }
-    else {
-      if(!!res){
-        deferred.resolve(res);
-      }
-      else {
-        deferred.resolve(null);
-      }
-    }
-  });
+// var getCurrentStar = function(userId){
+//   console.log('getting current star for', userId);
+//   var deferred = Q.defer();
+
+//   redis.get((baseKey + ':' + 'currentStar' + ':' + userId), function(err, res){
+//     if(err){
+//       deferred.reject(new Error(err));
+//     }
+//     else {
+//       if(!!res){
+//         deferred.resolve(res);
+//       }
+//       else {
+//         deferred.resolve(null);
+//       }
+//     }
+//   });
   
-  return deferred.promise;
-};
+//   return deferred.promise;
+// };
 
-var setCurrentStar = function(userId, trackId) {
-  var deferred = Q.defer();
+// var setCurrentStar = function(userId, trackId) {
+//   var deferred = Q.defer();
 
-  redis.set((baseKey + ':' + 'currentStar' + ':' + userId), trackId, function(err, res){
-    if(err){
-      deferred.reject(new Error(err));
-    }
-    else {
-      deferred.resolve(true);
-    }
-  });
-  return deferred.promise;
-};
+//   redis.set((baseKey + ':' + 'currentStar' + ':' + userId), trackId, function(err, res){
+//     if(err){
+//       deferred.reject(new Error(err));
+//     }
+//     else {
+//       deferred.resolve(true);
+//     }
+//   });
+//   return deferred.promise;
+// };
 
+
+var voteUpdateCbs = {};
 
 module.exports = {
 
@@ -262,65 +210,9 @@ module.exports = {
     return track.upvote(score);
   },
 
-  star: function(userId, trackId){
-    return getCurrentStar(userId)
-    .then(function(formerStarId){
-      var out = [];
-
-      // Push the former in the updates if any
-      if (!!formerStarId) {
-        var formerStar = new Track(formerStarId);
-        out.push(
-          formerStar
-          .unstar(userId)
-          .then(function(){
-            return formerStar.getAttrs()
-          })
-        );
-      }
-
-      // Anyway, push the new star
-      var newStar = new Track(trackId);
-      out.push(
-        newStar
-        .star(userId)
-        .then(function(){
-          return setCurrentStar(userId, trackId);
-        })
-        .then(function(){
-          return newStar.getAttrs();
-        })
-      );
-
-      return Q.all(out);
-    });
+  userVotes: function(userId){
+    return getUserVotes(userId);
   },
-
-  currentStar: function(userId){
-    return getCurrentStar(userId);
-  },
-
-  // multiply: function(id){
-  //   var track = new Track(id);
-
-  //   var strength, start;
-
-  //   return track.getMultiplier()
-  //   .then(function(multiplier){
-  //     strength = multiplier + 1;
-  //     track.setAttr('multiplier_strength', strength);
-  //   })
-  //   .then(function(){
-  //     start = Date.now();
-  //     track.setAttr('multiplier_start', start);
-  //   })
-  //   .then(function(){
-  //     return {
-  //       strength: strength,
-  //       start: start
-  //     };
-  //   });
-  // },
 
   popTopTrack: function(){
     return Track.getTop()
@@ -349,5 +241,9 @@ module.exports = {
       return Q.all(playlistWithDetails);
 
     });
+  },
+
+  setVoteUpdateCb: function(userId, cb){
+    voteUpdateCbs[userId] = cb;
   }
 };

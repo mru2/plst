@@ -2,7 +2,7 @@
 // Search controller
 // =================
 
-angular.module('app').controller('SearchCtrl', function($scope, $socket, $timeout) {
+angular.module('app').controller('SearchCtrl', function($scope, $timeout, Sync) {
 
   $scope.query = '';
   $scope.searching = false;
@@ -38,21 +38,11 @@ angular.module('app').controller('SearchCtrl', function($scope, $socket, $timeou
   };
 
   $scope.addTrack = function(track){
-    $socket.emit('addTrack', track);
     track.status = 'adding';
-  };
 
-  $socket.on('newTrack', function(track){
-
-    // Marking the track as added
-    var result = _.find($scope.results, function(result){
-      return ( result.id === track.id );
+    Sync.addTrack(function(){
+      track.status = 'added';
     });
-
-    if (result !== undefined) {
-      result.status = 'added';
-    }
-
-  });
+  };
 
 });

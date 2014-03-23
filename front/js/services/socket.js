@@ -5,16 +5,15 @@
 
 angular.module('app').factory('$socket', function($rootScope){
 
-  // TODO better, handle development and production configuration
   var socket;
 
+  // TODO better, handle development and production configuration
   if ( location.hostname === 'localhost' ) {
     socket = io.connect('http://localhost:3457');
   }
   else {
     socket = io.connect('http://' + location.hostname + ':3456');
   }
-
 
   return {
     on: function (eventName, callback) {

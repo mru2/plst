@@ -1,5 +1,5 @@
 // Represent the current user, persisted in session
-angular.module('app').factory('User', function($cookieStore){
+angular.module('app').factory('User', function($cookieStore, Sync){
 
   var generateUid = function(){
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -16,16 +16,46 @@ angular.module('app').factory('User', function($cookieStore){
     $cookieStore.put('uid', uid);
   }
 
-  var votes = 55;
+  var votes = 0;
+  var pendingVotes = [];
+  var totalPendingVotes = 0;
 
-  return {
+
+  var User = {
     id: uid,
-    votes: function(){
-      return votes;
+
+    bootstrap: function(data){
+      votes = data.votes;
     },
-    useVote: function(){
-      votes -= 1;
+
+    votes: function(){
+      return votes - totalPendingVotes;
+    },
+
+    useVote: function(trackId){
+      console.log('using vote on ', trackId);
+      pendingVotes[trackId] = pendingVotes[trackId] || 0;
+      pendingVotes[trackId] += 1;
+      totalPendingVotes += 1;
+    },
+
+    clearVotes: function(trackId){
+      console.log('clearing votes for ', trackId);
+      var trackVotes = pendingVotes[trackId];
+
+      totalPendingVotes -= trackVotes;
+      pendingVotes[trackId] = 0;
+
+      // Assume votes are cashed, will be corrected via the server anyway
+      votes -= trackVotes;
+    },
+
+    updateVotes: function(newVotes){
+      votes = newVotes;
     }
   };
+
+  Sync.setUser(User);
+  return User;
 
 });

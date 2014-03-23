@@ -2,7 +2,7 @@
 // Topbar controller
 // =================
 
-angular.module('app').controller('TopbarCtrl', function($rootScope, $scope, User) {
+angular.module('app').controller('TopbarCtrl', function($rootScope, $scope, User, Room) {
 
   $scope.votes = User.votes;
 
