@@ -1,5 +1,4 @@
 Name : WEARETHEDJ
- x Domain
  - Logo
  - email
  - deezer app
@@ -14,17 +13,12 @@ Front
 
 
 App
+ - optimistic handling (add track, upvote, ...) and handle failure case
+ - handle disconnections
  - (redesign : ionic?)
  - back button
- - onmousedown
- - render when loading
  - currently playing
- - gradual entry
- - consistent ordering
  - loader when reconnecting
- - score less wide + responsive
- - upvote pool
- - all position:absolute (?)
 
 
 Player page
@@ -34,7 +28,6 @@ Player page
 
 Back 
  - room creation
- - multiple rooms
 
 
 Arch

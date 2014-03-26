@@ -9,6 +9,7 @@
 // Dependencies
 var _       = require('lodash'),
     User    = require('./user.js'),
+    Track   = require('./track.js'),
     Adapter = require('./adapter.js');
 
 
@@ -19,14 +20,10 @@ var _rooms = {}; // id => room object
 // Room model
 var Room = function(roomId){
   this.id = roomId;
-  this.sockets = [];
-  this.users = {}; // Users already bound to their socket
-  // this.tracks = {};   // trackId => Track hash
-  // this.users = {};    // userId => User hash
-  //                     // TODO : store it in redis? (SET room:users // tracks)
-
-  // Bind to REDIS pubsub
-}
+  this.users = {};  // Users already bound to their socket
+  this.tracks = {}; // Tracks with TTL handled
+  this.bindListeners;
+};
 
 Room.prototype.connect = function(userId, socket) {
 
@@ -61,9 +58,44 @@ Room.prototype.disconnect = function(userId, socket) {
 };
 
 Room.prototype.bindSocket = function(socket) {
-  // Bind in on redis pubsub
+  var self = this;
 
-  // socket.on('')
+  // Listen to room-intended messages
+  socket.on('addTrack', function(trackData, cb){
+    Adapter.addTrack(trackData)
+    .then(function(added){
+      if (added) {
+        // If track added, handle its TTL
+        this.tracks[trackData.id] = new Track(trackData);
+      }
+      cb(added);
+    });
+  });
+};
+
+Room.prototype.bindListeners = function(){
+
+  // Watch room updates
+  // TOCHECK
+  this.newTracksListener = Adapter.newTracksListener(this.id);
+  this.newTracksListener.on('message', function(channel, message){
+    self.broadcast('newTrack', message);
+  });
+
+
+  // // Bind room-wide publishes
+  // Adapter.onNewTrack(this.id, function(trackData){
+  //   socket.emit('newTrack', trackData);
+  // });
+
+  // Adapter.onRemoveTrack(this.id, function(trackId){
+  //   socket.emit('removeTrack', trackId);
+  // });
+
+  // Adapter.onUpdateTrack(this.id, function(trackData){
+  //   socket.emit('updateTrack', trackData);
+  // });
+
 
   // Unbind : socket.removeAllListeners("...");
 };

@@ -68,7 +68,7 @@ angular.module('app').factory('Sync', function($rootScope, $socket){
 
     // Accessors to send data
     addTrack: function(track, cb){
-      $socket.emit('addTrack', track, cb);
+      $socket.emit('addTrack', {id: track.id, artist: track.artist.name, title: track.title}, cb);
     },
 
     upvoteTrack: function(trackId, score, cb){

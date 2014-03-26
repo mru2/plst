@@ -46,6 +46,24 @@ Adapter.getUser = function(roomId, userId){
 };
 
 
+// Add a new track if not yet existing
+// wants id, artist, title
+// returns boolean (added or not)
+Adapter.addTrack = function(roomId, trackData){
+
+  // Check if existing
+
+  // If not : return false
+
+  // Else : create details hash
+
+  // Then increment score in playlist (to 1)
+
+  // And publish to the pubsub room:id:newtrack with the data + score
+
+};
+
+
 // Get the playlist
 // - id
 // - score
@@ -81,6 +99,13 @@ Adapter.getPlaylist = function(roomId){
   });
 };
 
+
+// Redis subbers
+Adapter.newTrackListener = function(roomId){
+  var subber = redis.createClient();
+  subber.subscribe('plst:pubsub:rooms:'+roomId+':newtrack');
+  return subber;
+};
 
 
 module.exports = Adapter;

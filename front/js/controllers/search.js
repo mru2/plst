@@ -40,7 +40,7 @@ angular.module('app').controller('SearchCtrl', function($scope, $timeout, Sync) 
   $scope.addTrack = function(track){
     track.status = 'adding';
 
-    Sync.addTrack(function(){
+    Sync.addTrack(track, function(){
       track.status = 'added';
     });
   };
