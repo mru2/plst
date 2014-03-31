@@ -52,9 +52,10 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
 
     var self = this;
 
-    Sync.upvoteTrack(this.id, score, function(){
+    Sync.upvoteTrack(this.id, score, function(newScore){
       User.clearVotes(self.id);
       self.upvoting = false;
+      self.score = newScore;
     });
   };
 

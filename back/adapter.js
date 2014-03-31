@@ -81,6 +81,11 @@ var addNewTrack = function(trackData){
 };
 
 
+// Publishers
+var notifyTrackAdded = function(roomId, trackData){
+  client.publish('plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
+};
+
 // Get user details
 // - votes
 Adapter.getUser = function(roomId, userId){
@@ -101,6 +106,35 @@ Adapter.addTrack = function(roomId, trackData){
   // Set base score
   // Return true or false depending on score existence
   .then(function(){ return setBaseScore(roomId, trackData.id); })
+
+  // Notify the room if new track
+  .then(function(added){ 
+    if (added) {
+      trackData.score = 1;
+      notifyTrackAdded(trackData);
+      return true;
+    }
+    else {
+      return false;
+    }
+  });
+
+};
+
+
+// Upvote an existing track (if existing)
+Adapter.upvoteTrack = function(roomId, trackId, score){
+
+  // Check if existing before
+  return getTrack(trackId)
+  .then(function(res){
+    if (!res) {
+      return false;
+    }
+    else {
+      return upvoteTrack(roomId, trackId, score);
+    }
+  });
 
 };
 
@@ -149,11 +183,6 @@ Adapter.newTracksListener = function(roomId){
   return subber;
 };
 
-// Redis pubbers
-Adapter.notifyTrackAdded = function(roomId, trackData){
-  console.log('publishing new track');
-  client.publish('plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
-};
 
 
 module.exports = Adapter;

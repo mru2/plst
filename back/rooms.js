@@ -22,7 +22,6 @@ var Room = function(roomId){
   console.log('building room with id', roomId);
   this.id = roomId;
   this.users = {};  // Users already bound to their socket
-  this.tracks = {}; // Tracks with TTL handled
   this.bindListeners();
 };
 
@@ -61,24 +60,16 @@ Room.prototype.disconnect = function(userId, socket) {
 Room.prototype.bindSocket = function(socket) {
   var self = this;
 
-  // Listen to room-intended messages
+  // New track message
   socket.on('addTrack', function(trackData, cb){
-    Adapter.addTrack(self.id, trackData)
-    .then(function(added){
-      console.log('addTrack result', added);
-      if (added) {
-        console.log('TRACK ADDED', trackData);
-
-        // If track added, handle its TTL, and notify everyone
-        trackData.score = 1;
-
-        self.tracks[trackData.id] = new Track(trackData);
-
-        Adapter.notifyTrackAdded(self.id, trackData);
-      }
-      cb(added);
-    }).done();
+    Adapter.addTrack(self.id, trackData).then(cb).done();
   });
+
+  // Upvote message
+  socket.on('upvote', function(trackData, cb){
+    Adapter.upvoteTrack(self.id, trackData.id, trackData.score).then(cb).done();
+  });
+
 };
 
 Room.prototype.bindListeners = function(){
