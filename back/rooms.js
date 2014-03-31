@@ -19,10 +19,11 @@ var _rooms = {}; // id => room object
 
 // Room model
 var Room = function(roomId){
+  console.log('building room with id', roomId);
   this.id = roomId;
   this.users = {};  // Users already bound to their socket
   this.tracks = {}; // Tracks with TTL handled
-  this.bindListeners;
+  this.bindListeners();
 };
 
 Room.prototype.connect = function(userId, socket) {
@@ -62,24 +63,36 @@ Room.prototype.bindSocket = function(socket) {
 
   // Listen to room-intended messages
   socket.on('addTrack', function(trackData, cb){
-    Adapter.addTrack(trackData)
+    Adapter.addTrack(self.id, trackData)
     .then(function(added){
+      console.log('addTrack result', added);
       if (added) {
-        // If track added, handle its TTL
-        this.tracks[trackData.id] = new Track(trackData);
+        console.log('TRACK ADDED', trackData);
+
+        // If track added, handle its TTL, and notify everyone
+        trackData.score = 1;
+
+        self.tracks[trackData.id] = new Track(trackData);
+
+        Adapter.notifyTrackAdded(self.id, trackData);
       }
       cb(added);
-    });
+    }).done();
   });
 };
 
 Room.prototype.bindListeners = function(){
 
+  var self = this;
+
   // Watch room updates
   // TOCHECK
   this.newTracksListener = Adapter.newTracksListener(this.id);
   this.newTracksListener.on('message', function(channel, message){
-    self.broadcast('newTrack', message);
+    console.log('newTracksListener ping : ', message);
+    var trackDetails = JSON.parse(message);
+    self.broadcast('newTrack', trackDetails);
+    
   });
 
 
@@ -110,7 +123,7 @@ Room.prototype.sockets = function(){
 
 
 Room.prototype.broadcast = function(event, data){
-  _.each(this.sockets(), function(){
+  _.each(this.sockets(), function(socket){
     socket.emit(event, data);
   });
 };

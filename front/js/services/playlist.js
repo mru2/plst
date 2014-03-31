@@ -60,6 +60,7 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
 
 
   // Current tracks, indexed by id
+  var Playlist;
   var _tracks = {};
 
   // Bootstraping the playlist
@@ -87,7 +88,7 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
     track.bump(data.score - track.score);    
   };
 
-  var Playlist = {
+  Playlist = {
     bootstrap: bootstrap,
     addTrack: addTrack,
     removeTrack: removeTrack,

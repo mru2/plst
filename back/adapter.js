@@ -32,8 +32,52 @@ var trackKey = function(trackId){
 
 
 // Helpers
+var setBaseScore = function(roomId, trackId){
+  console.log('setting base score',  roomId, trackId);
+  return Q.ninvoke(client, 'zscore', playlistKey(roomId), trackId)
+  .then(function(res){
+
+    // Existing : return
+    if (!!res) {
+      console.log('track already upvoted', res);
+      return false;
+    }
+
+    // Else, set to 1 and return true
+    else {
+      console.log('upvoting track');
+      return Q.ninvoke(client, 'zadd', playlistKey(roomId), 1, trackId)
+      .then(function(){ return true });
+    }
+
+  });
+};
+
+var upvoteTrack = function(roomId, trackId, score){
+  return Q.ninvoke(client, 'zincrby', playlistKey(roomId), trackId, score);
+};
+
 var getTrack = function(trackId){
   return Q.ninvoke(client, 'hgetall', trackKey(trackId));
+};
+
+var addNewTrack = function(trackData){
+  // Check if existing
+  return getTrack(trackData.id).then(function(res){
+
+    if (res !== null) {
+      console.log('track existing', res);
+      return false;
+    }
+    else {
+      console.log('creating track');
+      return Q.ninvoke(client, 'hmset', trackKey(trackData.id), {
+        artist: trackData.artist,
+        title: trackData.title
+      });
+    }
+
+  });
 };
 
 
@@ -41,7 +85,7 @@ var getTrack = function(trackId){
 // - votes
 Adapter.getUser = function(roomId, userId){
   return Q.ninvoke(client, 'get', userKey(roomId, userId)).then(function(res){
-    return {votes: (res || 0)};
+    return {votes: (res || 10)};
   });
 };
 
@@ -51,15 +95,12 @@ Adapter.getUser = function(roomId, userId){
 // returns boolean (added or not)
 Adapter.addTrack = function(roomId, trackData){
 
-  // Check if existing
+  // Create details hash (if missing)
+  return addNewTrack(trackData)
 
-  // If not : return false
-
-  // Else : create details hash
-
-  // Then increment score in playlist (to 1)
-
-  // And publish to the pubsub room:id:newtrack with the data + score
+  // Set base score
+  // Return true or false depending on score existence
+  .then(function(){ return setBaseScore(roomId, trackData.id); })
 
 };
 
@@ -70,8 +111,9 @@ Adapter.addTrack = function(roomId, trackData){
 // - artist
 // - title
 Adapter.getPlaylist = function(roomId){
-  return Q.ninvoke(client, 'zrevrangebyscore', playlistKey(roomId), '+inf', 0, 'withscores')
+  return Q.ninvoke(client, 'zrevrangebyscore', playlistKey(roomId), '+inf', '-inf', 'withscores')
   .then(function(res){
+    console.log('raw playlist : ', res);
     // The result is in the form [id, score, id, score, ...]. Format it in the form [{id: id, score: score}, ...]
     var formattedRes = [];
 
@@ -101,10 +143,16 @@ Adapter.getPlaylist = function(roomId){
 
 
 // Redis subbers
-Adapter.newTrackListener = function(roomId){
+Adapter.newTracksListener = function(roomId){
   var subber = redis.createClient();
   subber.subscribe('plst:pubsub:rooms:'+roomId+':newtrack');
   return subber;
+};
+
+// Redis pubbers
+Adapter.notifyTrackAdded = function(roomId, trackData){
+  console.log('publishing new track');
+  client.publish('plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
 };
 
 

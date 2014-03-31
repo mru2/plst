@@ -29,6 +29,7 @@ angular.module('app').factory('Sync', function($rootScope, $socket){
   // Watchers
   var setupWatchers = function(){
     $socket.on('bootstrapPlaylist', function(data){
+      console.log('got playlist', data);
       Playlist.bootstrap(data);
       loadedCheck.tracks = true;
       checkLoadedStatus();
