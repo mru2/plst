@@ -67,7 +67,7 @@ Room.prototype.bindSocket = function(socket) {
 
   // Upvote message
   socket.on('upvote', function(trackData, cb){
-    Adapter.upvoteTrack(self.id, trackData.id, trackData.score).then(cb).done();
+    Adapter.upvoteTrack(self.id, trackData.trackId, trackData.score).then(cb).done();
   });
 
 };

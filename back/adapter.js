@@ -54,7 +54,7 @@ var setBaseScore = function(roomId, trackId){
 };
 
 var upvoteTrack = function(roomId, trackId, score){
-  return Q.ninvoke(client, 'zincrby', playlistKey(roomId), trackId, score);
+  return Q.ninvoke(client, 'zincrby', playlistKey(roomId), score, trackId);
 };
 
 var getTrack = function(trackId){
@@ -83,6 +83,7 @@ var addNewTrack = function(trackData){
 
 // Publishers
 var notifyTrackAdded = function(roomId, trackData){
+  console.log('publishing on redis', 'plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
   client.publish('plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
 };
 
@@ -111,7 +112,7 @@ Adapter.addTrack = function(roomId, trackData){
   .then(function(added){ 
     if (added) {
       trackData.score = 1;
-      notifyTrackAdded(trackData);
+      notifyTrackAdded(roomId, trackData);
       return true;
     }
     else {
@@ -124,6 +125,8 @@ Adapter.addTrack = function(roomId, trackData){
 
 // Upvote an existing track (if existing)
 Adapter.upvoteTrack = function(roomId, trackId, score){
+
+  console.log('upvoting track', trackId, 'by', score);
 
   // Check if existing before
   return getTrack(trackId)
@@ -163,15 +166,26 @@ Adapter.getPlaylist = function(roomId){
   .then(function(tracksWithScore){
     var fullTracks = _.map(tracksWithScore, function(trackWithScore){
       return getTrack(trackWithScore.id).then(function(trackDetails){
-        return {
-          id: trackWithScore.id,
-          score: trackWithScore.score,
-          artist: trackDetails.artist,
-          title: trackDetails.title
-        };
+
+        if (trackDetails) {
+          return {
+            id: trackWithScore.id,
+            score: trackWithScore.score,
+            artist: trackDetails.artist,
+            title: trackDetails.title
+          };
+        }
+
+        else {
+          return null;
+        }
+
       });
     });
     return Q.all(fullTracks);
+  })
+  .then(function(tracksWithDetails){
+    return _.compact(tracksWithDetails);
   });
 };
 
