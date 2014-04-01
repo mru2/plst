@@ -42,8 +42,8 @@ angular.module('app').factory('Sync', function($rootScope, $socket){
     });
 
     $socket.on('newTrack', Playlist.addTrack);
-    $socket.on('removeTrack', Playlist.removeTrack);
-    $socket.on('push', Playlist.upvoteTrack);
+    $socket.on('trackPlaying', Playlist.trackPlaying);
+    $socket.on('upvoteTrack', Playlist.upvoteTrack);
     $socket.on('votes', User.updateVotes);    
   };
 

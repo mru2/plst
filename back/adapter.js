@@ -80,12 +80,36 @@ var addNewTrack = function(trackData){
   });
 };
 
+var popTopTrack = function(roomId){
+  return Q.ninvoke(client, 'zrevrangebyscore', playlistKey(roomId), '+inf', 0, 'limit', 0, 1)
+  .then(function(res){
+    // Get the track id
+    var trackId = parseInt(res[0], 10);
+
+    // Pop the track and return the track id
+    return Q.ninvoke(client, 'zrem', playlistKey(roomId), trackId).then(function(){
+      return trackId;
+    });
+  });
+};
+
 
 // Publishers
 var notifyTrackAdded = function(roomId, trackData){
   console.log('publishing on redis', 'plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
   client.publish('plst:pubsub:rooms:'+roomId+':newtrack', JSON.stringify(trackData));
 };
+
+var notifyTrackUpvoted = function(roomId, trackId, score){
+  console.log('publishing on redis', 'plst:pubsub:rooms:'+roomId+':tracks:'+trackId+':upvote', score);
+  client.publish('plst:pubsub:rooms:'+roomId+':tracks:'+trackId+':upvote', score);
+};
+
+var notifyTrackPlaying = function(roomId, trackId){
+  console.log('publishing on redis', 'plst:pubsub:rooms:'+roomId+':playing', trackId);
+  client.publish('plst:pubsub:rooms:'+roomId+':playing', trackId);
+};
+
 
 // Get user details
 // - votes
@@ -135,7 +159,8 @@ Adapter.upvoteTrack = function(roomId, trackId, score){
       return false;
     }
     else {
-      return upvoteTrack(roomId, trackId, score);
+      return upvoteTrack(roomId, trackId, score)
+      .then(function(newScore){ notifyTrackUpvoted(roomId, trackId, newScore) });
     }
   });
 
@@ -148,7 +173,7 @@ Adapter.upvoteTrack = function(roomId, trackId, score){
 // - artist
 // - title
 Adapter.getPlaylist = function(roomId){
-  return Q.ninvoke(client, 'zrevrangebyscore', playlistKey(roomId), '+inf', '-inf', 'withscores')
+  return Q.ninvoke(client, 'zrevrangebyscore', playlistKey(roomId), '+inf', 0, 'withscores')
   .then(function(res){
     console.log('raw playlist : ', res);
     // The result is in the form [id, score, id, score, ...]. Format it in the form [{id: id, score: score}, ...]
@@ -157,7 +182,7 @@ Adapter.getPlaylist = function(roomId){
     for (var i = 0 ; i < (res.length/2) ; i++) {
       formattedRes.push({
         id: res[2*i],
-        score: parseInt(res[2*i + 1])
+        score: parseInt(res[2*i + 1], 10)
       });
     }
 
@@ -190,13 +215,54 @@ Adapter.getPlaylist = function(roomId){
 };
 
 
-// Redis subbers
-Adapter.newTracksListener = function(roomId){
-  var subber = redis.createClient();
-  subber.subscribe('plst:pubsub:rooms:'+roomId+':newtrack');
-  return subber;
+// Pop the top track in a playlist
+Adapter.popTopTrack = function(roomId){
+  return popTopTrack(roomId)
+  .then(function(trackId){
+
+    // Notify the track is popped
+    notifyTrackPlaying(roomId, trackId);
+
+    return trackId;
+  })
 };
 
+
+// Redis subbers
+// TODO : cleanup on disconnects...
+Adapter.onNewTrack = function(roomId, cb){
+  var subber = redis.createClient();
+
+  subber.on('message', function(channel, message){
+    cb(JSON.parse(message));
+  });
+
+  subber.subscribe('plst:pubsub:rooms:'+roomId+':newtrack');
+};
+
+Adapter.onUpvoteTrack = function(roomId, cb){
+  var subber = redis.createClient();
+
+  subber.on('pmessage', function(pchannel, channel, message){
+    console.log('SUBBER : got message', message, 'from channel', channel);
+    var splitChannel = channel.split(':');
+    var trackId = parseInt(splitChannel[splitChannel.length - 2], 10);
+    var score = parseInt(message, 10);
+    cb(trackId, score);
+  });
+
+  subber.psubscribe('plst:pubsub:rooms:'+roomId+':tracks:*:upvote');
+};
+
+Adapter.onTrackPlaying = function(roomId, cb){
+  var subber = redis.createClient();
+
+  subber.on('message', function(channel, message){
+    cb(parseInt(message, 10));
+  });
+
+  subber.subscribe('plst:pubsub:rooms:'+roomId+':playing');
+};
 
 
 module.exports = Adapter;

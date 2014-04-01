@@ -32,48 +32,46 @@
 
 <script>
 
-  window.pageLoaded = true;
+  window.changingTrack = false;
+  window.trackStarted = false;
 
-  function reload(){
-    console.log('trying to reload, page is', pageLoaded);
-    if(pageLoaded == true){
-      console.log('page was true, ignoring');
+
+  function nextTrack(){
+    if (changingTrack) {
       return;
     }
-    else{
-      pageLoaded = true;      
-      setTimeout(function(){
-        console.log('calling pop, page is ', pageLoaded);
-        $.getJSON('/pop', function(trackId){
-          pageLoaded = false;
-          DZ.player.playTracks([trackId]);
-        });
-      }, 1);
+    changingTrack = true;
+
+    $.ajax({
+      url: '/room/myroom/top',
+      type: 'DELETE',
+      success: function(trackId)({
+        DZ.player.playTracks([trackId]);
+      });
+    });
+  };
+
+  function onPlayerPos(position){
+    // Pos > 0 : track started
+    if (position > 0 && !trackStarted) {
+      trackStarted = true;
+      changingTrack = false; // Now, nextTrack can be called again
     }
-  }
+
+    // Pos = 0 and track started => it has ended
+    if (position == 0 && trackStarted) {
+      trackStarted = false;
+      nextTrack();
+    }
+  };
 
   function onPlayerLoaded() {
 
     DZ.Event.subscribe('player_position', function(pos){
-
-      // Track has begun
-      if(pos[0] > 0 && pageLoaded == false){
-        console.log('page loaded : ', pos);
-        pageLoaded = true;
-      }
-
-      // First is beginning, second is the end
-      if(pos[0] == 0 && pageLoaded == true){
-        console.log('reloading : ', pos);
-        pageLoaded = false;
-        reload(); // Sync global variable
-      }
+      onPlayerPos(pos[0]);
     });
 
-
-    $.getJSON('/pop', function(trackId){
-      DZ.player.playTracks([trackId]);
-    });
+    nextTrack();
   }
 
   DZ.init({

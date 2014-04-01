@@ -29,14 +29,15 @@ app.use(express.static(__dirname + '/front'));
 
 
 
-// // TODO!!!!!
-// // Pop top track API endpoint
-// app.get('/pop', function(req, res){
-//   db.popTopTrack().then(function(topTrackId){
-//     io.sockets.emit('removeTrack', topTrackId);
-//     res.send(topTrackId);
-//   }).done();
-// });
+// Pop top track API endpoint
+app.delete('/room/:roomId/top', function(req, res){
+  var room = Rooms.get(req.params.roomId);
+
+  room.popTopTrack().then(function(trackId){
+    console.log('popped top track. response is', trackId);
+    res.send(trackId);
+  }).done();
+});
 
 
 

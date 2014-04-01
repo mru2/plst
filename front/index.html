@@ -125,11 +125,17 @@
         <!-- Playlist -->
         <ul id="playlist" ng-controller="PlaylistCtrl" class="row" ng-show="!isSearch">
 
+          <div ng-show="playing !== {}">
+            <p>Currently playing : {{playing.artist}} - {{playing.title}}</p>
+            <br>
+          </div>
+
+
           <div ng-show="playlist.length === 0">
             <p class="notracks">The playlist is empty :( &nbsp;&nbsp; Add some tracks with the search in the top right</p>
           </div>
 
-          <li ng-repeat="track in playlist | orderBy:['score', 'id']:true" class="track small-12 columns">
+          <li ng-repeat="track in playlist | orderBy:'score':true" class="track small-12 columns">
 
               <div class="upvote" ng-class="track.upvoting ? 'loading' : 'done'">
                 <div class="outer" ng-mousedown="track.startUpvote()">

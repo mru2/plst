@@ -13,6 +13,10 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
   };
 
   Track.prototype.bump = function(score) {
+    if (score === 0) {
+      return
+    }
+
     var track = this;
 
     var bumpOne = function(){
@@ -79,8 +83,13 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
   };
 
   // Remove a track
-  var removeTrack = function(trackId){
-    delete _tracks[trackId];    
+  var trackPlaying = function(trackId){
+    var track = _tracks[trackId];
+    Playlist.playing = {
+      title: track.title,
+      artist: track.artist
+    };
+    delete _tracks[trackId];
   };
 
   // Receive upvotes
@@ -92,9 +101,10 @@ angular.module('app').factory('Playlist', function($rootScope, $timeout, Sync, U
   Playlist = {
     bootstrap: bootstrap,
     addTrack: addTrack,
-    removeTrack: removeTrack,
+    trackPlaying: trackPlaying,
     upvoteTrack: upvoteTrack,
     tracks: _tracks,
+    playing: {}
   };
 
   Sync.setPlaylist(Playlist);

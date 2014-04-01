@@ -8,8 +8,6 @@
 
 // Dependencies
 var _       = require('lodash'),
-    User    = require('./user.js'),
-    Track   = require('./track.js'),
     Adapter = require('./adapter.js');
 
 
@@ -21,21 +19,20 @@ var _rooms = {}; // id => room object
 var Room = function(roomId){
   console.log('building room with id', roomId);
   this.id = roomId;
-  this.users = {};  // Users already bound to their socket
+  this.sockets = {};  // Users already bound to their socket
   this.bindListeners();
 };
 
 Room.prototype.connect = function(userId, socket) {
 
-  // Create the user if missing (needed? Redis ~= RAM...)
-  var user;
-  if ( !_.has(this.users, userId) ){
-    user = new User(this.id, socket);
-    this.users[userId] = user;
+  // TODO : Handle new user (publish)
+
+  // Store the user socket
+  if (this.sockets[userId]) {
+    // Close the exising socket, and clear bindings
   }
-  else {
-    user = this.users[userId];
-  }
+
+  this.sockets[userId] = socket;
 
   // Bind the socket
   this.bindSocket(socket);
@@ -77,49 +74,32 @@ Room.prototype.bindListeners = function(){
   var self = this;
 
   // Watch room updates
-  // TOCHECK
-  this.newTracksListener = Adapter.newTracksListener(this.id);
-  this.newTracksListener.on('message', function(channel, message){
-    console.log('newTracksListener ping : ', message);
-    var trackDetails = JSON.parse(message);
+  Adapter.onNewTrack(this.id, function(trackDetails){
     self.broadcast('newTrack', trackDetails);
-    
   });
 
+  Adapter.onUpvoteTrack(this.id, function(trackId, score){
+    self.broadcast('upvoteTrack', {trackId: trackId, score: score});
+  });
 
-  // // Bind room-wide publishes
-  // Adapter.onNewTrack(this.id, function(trackData){
-  //   socket.emit('newTrack', trackData);
-  // });
-
-  // Adapter.onRemoveTrack(this.id, function(trackId){
-  //   socket.emit('removeTrack', trackId);
-  // });
-
-  // Adapter.onUpdateTrack(this.id, function(trackData){
-  //   socket.emit('updateTrack', trackData);
-  // });
+  Adapter.onTrackPlaying(this.id, function(trackId){
+    self.broadcast('trackPlaying', trackId);
+  });
 
 
   // Unbind : socket.removeAllListeners("...");
 };
 
 
-Room.prototype.sockets = function(){
-  // Get all connected sockets
-  return _.map(this.users, function(user){
-    return user.socket;
-  });
-};
-
-
 Room.prototype.broadcast = function(event, data){
-  _.each(this.sockets(), function(socket){
+  _.each(_.values(this.sockets), function(socket){
     socket.emit(event, data);
   });
 };
 
-
+Room.prototype.popTopTrack = function(){
+  return Adapter.popTopTrack(this.id);
+};
 
 // Exported interface
 var Rooms = {};
