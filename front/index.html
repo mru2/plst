@@ -102,7 +102,7 @@
               <div class="front row">
 
                 <div class="add">
-                  <i class="fa fa-plus-circle" ng-click="addTrack(track)" ng-show="track.status === undefined"></i>
+                  <i class="fa fa-plus-circle" ng-click="addTrack(track);isSearch = false" ng-show="track.status === undefined"></i>
                   <i class="fa fa-spinner fa-spin" ng-show="track.status === 'adding'"></i>
                   <i class="fa fa-check track-added" ng-show="track.status === 'added'"></i>
                 </div>
