@@ -43,14 +43,7 @@
       return;
     }
     else{
-      pageLoaded = true;      
-      setTimeout(function(){
-        console.log('calling pop, page is ', pageLoaded);
-        $.getJSON('/pop', function(trackId){
-          pageLoaded = false;
-          DZ.player.playTracks([trackId]);
-        });
-      }, 1);
+      pageLoaded = true;
     }
   }
 
