@@ -6,13 +6,12 @@
   <link rel="stylesheet" type="text/css" href="/css/foundation.min.css">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
 
-
 </head>
 <body>
 
 <div class="row">
 <br/>
-<p style="font-size: 3em;">Pour choisir la musique ca se passe sur <strong>http://bit.ly/playlistcoloc</strong></p>
+<p style="font-size: 3em;">Pour choisir la musique ca se passe sur <strong id="url-playlist"></strong></p>
 <br/>
 </div>
 
@@ -31,6 +30,9 @@
 <script type="text/javascript" src="http://cdn-files.deezer.com/js/min/dz.js"></script>
 
 <script>
+  var domain = window.document.domain;
+
+  $('#url-playlist').html('http://'+domain);
 
   window.pageLoaded = true;
 
@@ -41,14 +43,7 @@
       return;
     }
     else{
-      pageLoaded = true;      
-      setTimeout(function(){
-        console.log('calling pop, page is ', pageLoaded);
-        $.getJSON('/pop', function(trackId){
-          pageLoaded = false;
-          DZ.player.playTracks([trackId]);
-        });
-      }, 1);
+      pageLoaded = true;
     }
   }
 
@@ -78,7 +73,7 @@
 
   DZ.init({
     appId  : '133181',
-    channelUrl : 'http://playlist.mru2.com/channel.html',
+    channelUrl : 'http://'+document.domain+'/channel.html',
     player : {
       container : 'player',
       cover : true,

@@ -1,4 +1,4 @@
-var redis = require('redis').createClient(),
+var redis = require('redis').createClient(process.env.OPENSHIFT_REDIS_PORT, process.env.OPENSHIFT_REDIS_HOST, {auth_pass: process.env.REDIS_PASSWORD}),
     Q     = require('q'),
     _     = require('lodash');
 

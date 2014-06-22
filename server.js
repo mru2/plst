@@ -1,6 +1,6 @@
 // Configuration
-var appPort     = 14001
-  , socketPort  = 3457;
+var appPort     = process.env.OPENSHIFT_NODEJS_PORT || 8080
+  , socketPort  = 8000;
 
 
 // Web apps
@@ -8,18 +8,30 @@ var express       = require('express')
   , app           = express()
   , server        = require('http').createServer(app)
   , socketServer  = require('http').createServer()
-  , io            = require('socket.io').listen(socketServer)
+  , io            = require('socket.io').listen(server)
   , db            = require('./back/db.js');
 
+io.configure(function(){
+    io.set("transports", ["websocket"]);
+});
+
+var ipaddress = process.env.OPENSHIFT_NODEJS_IP;
+if (typeof ipaddress === "undefined") {
+    //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
+    //  allows us to run/test the app locally.
+    console.warn('No OPENSHIFT_NODEJS_IP var, using 127.0.0.1');
+    ipaddress = "127.0.0.1";
+};
 
 // Launch apps
 // Separate port for sockets for 3G compatibility
-server.listen(appPort);
-console.log('App listening on port : ' + appPort);
+server.listen(appPort, ipaddress, function() {        
+    console.log('App listening on port : ' + appPort);
+});
 
-socketServer.listen(socketPort);
-console.log('Sockets listening on port : ' + socketPort);
-
+//socketServer.listen(appPort, ipaddress, function() {        
+//    console.log('Sockets listening on port : ' + appPort);
+//});
 
 // Static files middleware
 app.use(express.static(__dirname + '/front'));
